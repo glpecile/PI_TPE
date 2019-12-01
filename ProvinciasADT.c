@@ -25,5 +25,5 @@ typedef struct tProvVec
 {
     int code;  //Codigo de identificacion de la Provincia
     char * value; //Nombre de la provincia
-    tYear * years; //Vector donde se almacena la cantidad de nacimientos por anios
+    tYear * years; //Vector donde se almacena la cantidad de nacimientos por años
 } tProvVec;
