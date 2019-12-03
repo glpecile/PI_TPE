@@ -30,14 +30,15 @@ typedef struct provCDT
 
 static nodeProv * addProvRec(nodeProv * firstList, char * code, char * value, size_t * size);
 
-//static int compare(const char * c1, const char * c2);
+static int compare(const char * c1, const char * c2);
 static void printVec(provADT set);
 
-static int binarySearch(tProvVec * datos, size_t dim, char * num);
+//static int binarySearch(tProvVec * datos, size_t dim, char * num, int * idx);
+static int binarySrch(tProvVec * prov, int min, int max, char * num);
 
 static void listToArray(provADT set);
 
-
+static void freeListRec(nodeProv * first);
 
 provADT
 newSet(void)
@@ -83,11 +84,9 @@ void finalizeProvAddition(provADT set)
 {
     listToArray(set);
     //ESTO SE TIENE QUE IR A LA MIERDA
-    /*
     printVec(set);
-    char * aBuscar = "11000";
-    printf("Esta el codigo %i\n", binarySearch(set->provVec,set->qProv, aBuscar));
-    */
+    //char * aBuscar = "11000";
+    //printf("Esta el codigo %i\n", binarySearch(set->provVec,set->qProv, aBuscar));
 }
 
 static void listToArray(provADT set)
@@ -140,10 +139,10 @@ void
 printProv(provADT set)
 {
     nodeProv * aux = set->firstList;
-
+    int i=0;
     while(aux != NULL)
     {
-        printf("COD: %s\tPROV: %s\n", aux->code, aux->value);
+        printf("idx:%d\t COD: %s\tPROV: %s\n", i++, aux->code, aux->value);
         aux = aux->tail;
     }
     return;
@@ -186,27 +185,62 @@ nextProv(provADT set)
 
 //hace una busqueda binaria del array obtenito de la lista y retorna el indice
 static int
-binarySearch(tProvVec * prov, size_t dim, char * num)
+binarySearch(tProvVec * prov, size_t dim, char * num, int * idx)
 {
+    int a = dim%2;
+
     if(dim == 0)
     {
-        return -1;
+        return -1000;
     }
     int comp = strcmp(prov[dim/2].code, num);
     if(comp == 0)
     {
-        return dim/2;
+        *idx +=dim/2;
+        return dim/2+a;
     }
 
     if(comp>0)
     {
-        return binarySearch(prov, dim/2, num);
+        return binarySearch(prov, dim/2, num, idx);
     }
-    return binarySearch(prov + dim/2 + 1, dim/2, num);
+    *idx += dim/2 + 1;
+    return binarySearch(prov + dim/2 + 1, dim/2, num, idx)+dim/2+a;
 }
+
+static int
+binarySrch(tProvVec * prov, int min, int max, char * num)
+{
+    if (max-min==0)
+    {
+        return -1;
+    }
+    int comp = strcmp(prov[min + (max-min)/2].code,num);
+    if (comp==0)
+    {
+        return min + (max-min)/2;
+    }
+    if (comp>0)
+    {
+        return binarySrch(prov, min, (max-min)/2 - 1, num);
+    }
+    return binarySrch(prov, (max-min)/2 + 1, max, num);
+}
+
 int addBirth(provADT set, char * year, char * provres, char * gen)
 {
-    int idx = binarySearch(set->provVec,set->qProv, provres);
+    char aux[3];
+    aux[2] = 0;
+    int idx;
+    for(int i = 0; i < 100; i++)
+    {
+        idx=0;
+        aux[1] = (i % 10) + '0';
+        aux[0] = ((i / 10) % 10) + '0';
+        binarySearch(set->provVec,set->qProv, aux, &idx);
+        //idx = binarySrch(set->provVec, 0, set->qProv - 1, aux);
+        printf("Codigo: %s\ti: %d\tIndice: %d\n",aux, i,  idx);
+    }
     size_t currentTotal=set->total;
     printf("Teremino el binary\tIndice: %d\n", idx);
     if (addYear(set->provVec[idx].years,atoi(year),atoi(gen)) && idx!=-1)
@@ -222,4 +256,31 @@ void printVec(provADT set)
     {
         printf("%s\t%s\n", set->provVec[i].code, set->provVec[i].value);
     }
+}
+
+void
+freeSet(provADT set)
+{
+    for(int i = 0; i < set->qProv; i++)
+    {
+        freeYears(set->provVec[i].years);
+    }
+    free(set->provVec);
+    freeListRec(set->firstList);
+    free(set);
+}
+
+static void
+freeListRec(nodeProv * first)
+{
+    if(first == NULL)
+    {
+        return;
+    }
+
+    freeListRec(first->tail);
+    free(first->code);
+    free(first->value);
+    free(first);
+    return;
 }
