@@ -34,8 +34,6 @@ int main (int argc, char * argv[])
     query(set);
     readBirths(nacimientos, set);
     freeSet(set);
-    fclose(provincias);
-    fclose(nacimientos);
     printf("Finalizo el programa\n");
     return 0;
 }
@@ -55,6 +53,7 @@ readProvs(FILE * provincias, provADT set)
         //printf("Print 1: %s\t%s\n", cod, prov);
     }
     finalizeProvAddition(set);
+    fclose(provincias);
 }
 
 void
@@ -72,12 +71,11 @@ readBirths(FILE * nacimientos, provADT set)
     while(fscanf(nacimientos, "%[^,],%[^,],%c,%c,%[^\n]\n", year, provres, &tipoParto, &gen,aux) == 5)
     {
         i++;
-        if(i % 10000 == 0)
-            printf("LINEAS: %lu\n", i);
         //printf("%s\t%s\t%s\n", year, provres, gen);
         addBirth(set, year, provres, gen);
     }
-
+    printf("Cantidad de LINEAS: %lu\n", i);
+    fclose(nacimientos);
 }
 
 /*
