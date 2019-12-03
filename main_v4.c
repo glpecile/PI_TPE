@@ -33,6 +33,7 @@ int main (int argc, char * argv[])
     printProv(set);
     query(set);
     readBirths(nacimientos, set);
+    freeSet(set);
     fclose(provincias);
     fclose(nacimientos);
 

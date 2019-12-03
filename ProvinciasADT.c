@@ -103,7 +103,7 @@ listToArray(provADT set)
     {
         set->provVec[i].code = aux->code;
         set->provVec[i].value = aux->value;
-
+        set->provVec[i].years = newYears();
         aux = aux->tail;
         i++;
     }

@@ -7,6 +7,8 @@
 
     typedef struct yearCDT * yearADT;
 
+    yearADT newYears (void);
+
     //recibe la el set->provVec->years y crea un nodo
     int addYear (yearADT yearSet, int year, int gen);
 

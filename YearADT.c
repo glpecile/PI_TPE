@@ -1,5 +1,4 @@
 #include "YearADT.h"
-#include <stddef.h>
 #define MALE 1
 #define FEMALE 2
 
@@ -25,6 +24,11 @@ compare(unsigned int  c1, unsigned int c2)
     return c1-c2;
 }
 
+yearADT newYears (void)
+{
+    return calloc(1,sizeof(yearCDT));
+}
+
 static void
 addByGender(nodeYear * node, int gen)
 {
@@ -38,9 +42,10 @@ addByGender(nodeYear * node, int gen)
     }
 }
 
-nodeYear *
+static nodeYear *
 addYearRec(nodeYear * node, int year, int gen, int * flag)
 {
+    printf("Antes del primeer if\n" );
     if(node == NULL || year < node->year )
     {
         nodeYear * aux = calloc(1,sizeof(nodeYear));
@@ -69,7 +74,8 @@ addYear (yearADT yearSet, int year, int gen)
     return flag;
 }
 
-void freeYears(yearADT years)
+void
+freeYears(yearADT years)
 {
 	if(years != NULL)
 	{
