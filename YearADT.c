@@ -1,4 +1,5 @@
-
+#include "YearADT.h"
+#include <stddef.h>
 typedef struct nodeYear //estructura para el año Funciona como lista
 {
     unsigned int year;
@@ -14,44 +15,17 @@ typedef struct yearCDT
 } yearCDT;
 
 
-void
-addYear (yearADT yearSet, unsigned int year, size_t male, size_t female)
-{
+void addYear (yearADT yearSet, unsigned int year, size_t male, size_t female);
 
-}
+void toBeginYear (yearADT yearSet);
 
-void
-toBeginYear (yearADT yearSet)
-{
+yearADT * nextYear (yearADT yearSet);
 
-}
+int hasNextYear (yearADT yearSet);
 
-nodeYear *
-nextYear (provADT yearSet)
-{
+int getMale (yearADT * currentYear);
 
-}
+int getFemale(yearADT * currentYear);
 
-int
-hasNextYear (provADT yearSet)
-{
+int getTotal (yearADT * currentYear);
 
-}
-
-int
-getMale (nodeYear * currentYear)
-{
-
-}
-
-int
-getFemale(nodeYear * currentYear)
-{
-
-}
-
-int
-getTotal (nodeYear * currentYear)
-{
-
-}
