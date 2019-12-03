@@ -1,10 +1,6 @@
 #include "ProvinciasADT.h"
 //bibliografia tutorialspoint
 #define MAX_TEXT 100
-//#define DELIM ",\n"
-
-enum csvProvincias {COD = 0, PROV = 1};
-enum csvNacimientos {YEAR = 0, PROVRES = 1, GEN = 3};
 
 void readProvs(FILE * provincias, provADT set);
 void readBirths(FILE * nacimientos, provADT set);
@@ -34,7 +30,7 @@ int main (int argc, char * argv[])
 
     readProvs(provincias, set);
     printf("\nImpresion de lista:\n");
-    //printProv(set);
+    printProv(set);
     query(set);
     readBirths(nacimientos, set);
     fclose(provincias);
@@ -46,73 +42,38 @@ int main (int argc, char * argv[])
 void
 readProvs(FILE * provincias, provADT set)
 {
-    char text[MAX_TEXT] = {'0'};
-    char cod[2];
+    char aux[MAX_TEXT] = {'0'};
+    char cod[3];
     char prov[MAX_TEXT] = {'0'};
     //while(fgetc(provincias)!='\n');
-    fgets(text, MAX_TEXT, provincias); //Elimina encabezado
+    fgets(aux, MAX_TEXT, provincias); //Elimina encabezado
     while(fscanf(provincias,"%[^,],%[^\n]\n", cod, prov) == 2)
     {
         prov[strlen(prov)-1]=0;
         addProv(set, cod, prov);
         //printf("Print 1: %s\t%s\n", cod, prov);
     }
+    finalizeProvAddition(set);
 }
 
 void
 readBirths(FILE * nacimientos, provADT set)
 {
-    char text1[MAX_TEXT];
+    char aux[MAX_TEXT];
     char provres[3];
     char year[5];
     char gen[2];
-    char not[2];
+    char tipoParto[2];
 
     //CARGAMOS LOS NACIMIENTOS
-    //while(fgetc(nacimientos)!='\n');
-    fgets(text1, MAX_TEXT, nacimientos); //Elimina encabezado
-    printf("AN\tPROV\tGEN\n");
-    while(fscanf(nacimientos,"%[^,],%[^,],%[^,],%[^,],%[^\n]\n",year,provres,not,gen,text1) == 5)
+    fgets(aux, MAX_TEXT, nacimientos); //Elimina encabezado
+    //printf("AN\tPROV\tGEN\n");
+    while(fscanf(nacimientos,"%[^,],%[^,],%[^,],%[^,],%[^\n]\n",year,provres,tipoParto,gen,aux) == 5)
     {
-        printf("%s\t%s\t%s\n",year,provres,gen);
-        //addYear(set,year,provres,gen);
+        printf("%s\t%s\t%s\n", year, provres, gen);
+        addBirth(set, year, provres, gen);
     }
-    /*
-    while(fgets(text, MAX_TEXT, nacimientos))
-    {
-        token=strtok(text,DELIM);
-        i = 0;
-
-        while(token != NULL)
-        {
-            switch(i)
-            {
-                case YEAR:
-                {
-                    year = token;
-                    printf("AÑO: %s\t", year);
-                }break;
-
-                case PROVRES:
-                {
-                    provres = token;
-                    printf("PROVRES: %s\t", provres);
-                }break;
-                case GEN:
-                {
-                    gen = token;
-                    printf("GEN: %s\n", gen);
-                }break;
-            }
-            token = strtok(NULL, DELIM);
-            i++;
-        }
-        //Mandamos cod y prov al tad para que lo guarde
-    }
-    */
 }
-
-
 /*
 gcc -Wall -pedantic -std=c99 -fsanitize=address -o prueba main.c
 ./prueba provincias.csv nacimientos2.csv

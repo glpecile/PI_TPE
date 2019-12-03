@@ -33,4 +33,10 @@
 
     void query(provADT set);
 
+    void toBeginProv(provADT set);
+
+    int hasNextProv(provADT set);
+
+    void nextProv(provADT set);
+
 #endif

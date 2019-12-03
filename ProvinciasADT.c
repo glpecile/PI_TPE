@@ -21,13 +21,23 @@ typedef struct tProvVec
 
 typedef struct provCDT
 {
+    size_t total;//Cantidad de nacimientos en el pais
     size_t qProv; //Cantidad de Provincias
     tProvVec * provVec; //vector a ser creado en listToArray
     nodeProv * firstList; //Lista en donde se cargan las provincias ordenadas por codigo
+    int current;
 } provCDT;
 
 static nodeProv * addProvRec(nodeProv * firstList, char * code, char * value, size_t * size);
-static int compare(const char * c1, const char * c2);
+
+//static int compare(const char * c1, const char * c2);
+static void printVec(provADT set);
+
+static int binarySearch(tProvVec * datos, size_t dim, char * num);
+
+static void listToArray(provADT set);
+
+
 
 provADT
 newSet(void)
@@ -46,7 +56,7 @@ addProv(provADT set, char * code, char * value)
 static nodeProv *
 addProvRec(nodeProv * firstList, char * code, char * value, size_t * size)
 {
-    if(firstList == NULL || compare(firstList->code, code) < 0)
+    if(firstList == NULL || /*compare(firstList->code, code)*/strcmp(code,firstList->code) < 0)
     {
         nodeProv * aux = malloc(sizeof(nodeProv));
         aux->tail = firstList;
@@ -61,7 +71,7 @@ addProvRec(nodeProv * firstList, char * code, char * value, size_t * size)
         strcpy(aux->value, value);
 
         (*size)++;
-
+        //printf("Print 2: %s\t%s\n", aux->code, aux->value);
         return aux;
     }
 
@@ -69,12 +79,40 @@ addProvRec(nodeProv * firstList, char * code, char * value, size_t * size)
     return firstList;
 }
 
+void finalizeProvAddition(provADT set)
+{
+    listToArray(set);
+    //ESTO SE TIENE QUE IR A LA MIERDA
+    /*
+    printVec(set);
+    char * aBuscar = "11000";
+    printf("Esta el codigo %i\n", binarySearch(set->provVec,set->qProv, aBuscar));
+    */
+}
+
+static void listToArray(provADT set)
+{
+    int i = 0;
+    nodeProv * aux = set->firstList;
+
+    set->provVec = calloc(set->qProv, sizeof(tProvVec));
+
+    while(aux != NULL)
+    {
+        set->provVec[i].code = aux->code;
+        set->provVec[i].value = aux->value;
+
+        aux = aux->tail;
+        i++;
+    }
+}
+/*
 //Si c1>c2 retorna 1 y va primero c1, si c2>c2 retorna -1 y va primero c2
 static int
 compare(const char * c1, const char * c2)
 {
     int i=0;
-    while(c1[i]!=0 && c2[i]!=0)
+    while(c1[i] !=0 && c2[i] !=0)
     {
         if(c1[i]>c2[i])
         {
@@ -90,10 +128,13 @@ compare(const char * c1, const char * c2)
     {
         return 1;
     }
-    return -1;
+    if (c2[i]==0)
+    {
+        return -1;
+    }
+    return 0;
 }
-
-
+*/
 
 void
 printProv(provADT set)
@@ -108,7 +149,8 @@ printProv(provADT set)
     return;
 }
 
-void query(provADT set)
+void
+query(provADT set)
 {
     FILE * file1 = fopen("query1.csv", "w");
 
@@ -117,9 +159,67 @@ void query(provADT set)
     nodeProv * aux = set->firstList;
     while(aux != NULL)
     {
-            fprintf(file1, "%s,%s\n", aux->value, aux->code);
-            aux = aux->tail;
+        fprintf(file1, "%s,%s\n", aux->value, aux->code);
+        aux = aux->tail;
     }
 
     fclose(file1);
+}
+
+void
+toBeginProv(provADT set)
+{
+    set->current = 0;
+}
+
+int
+hasNextProv(provADT set)
+{
+    return set->current < set->qProv;
+}
+
+void
+nextProv(provADT set)
+{
+    set->current ++;
+}
+
+//hace una busqueda binaria del array obtenito de la lista y retorna el indice
+static int
+binarySearch(tProvVec * prov, size_t dim, char * num)
+{
+    if(dim == 0)
+    {
+        return -1;
+    }
+    int comp = strcmp(prov[dim/2].code, num);
+    if(comp == 0)
+    {
+        return dim/2;
+    }
+
+    if(comp>0)
+    {
+        return binarySearch(prov, dim/2, num);
+    }
+    return binarySearch(prov + dim/2 + 1, dim/2, num);
+}
+int addBirth(provADT set, char * year, char * provres, char * gen)
+{
+    int idx = binarySearch(set->provVec,set->qProv, provres);
+    size_t currentTotal=set->total;
+    printf("Teremino el binary\tIndice: %d\n", idx);
+    if (addYear(set->provVec[idx].years,atoi(year),atoi(gen)) && idx!=-1)
+    {
+        printf("%ld\n", set->total++);
+    }
+    return set->total != currentTotal;
+}
+void printVec(provADT set)
+{
+    printf("Tamaño: %ld\n", set->qProv);
+    for(int i = 0; i < set->qProv; i++)
+    {
+        printf("%s\t%s\n", set->provVec[i].code, set->provVec[i].value);
+    }
 }

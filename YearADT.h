@@ -1,11 +1,13 @@
 #ifndef _yearADT_h
 #define _yearADT_h
-	
+
 	#include <stddef.h>
-    
+    #include <stdlib.h>
+
     typedef struct yearCDT * yearADT;
 
-    void addYear (yearADT yearSet, unsigned int year, size_t male, size_t female);
+    //recibe la el set->provVec->years y crea un nodo
+    int addYear (yearADT yearSet, int year, int gen);
 
     void toBeginYear (yearADT yearSet);
 
@@ -13,11 +15,14 @@
 
     int hasNextYear (yearADT yearSet);
 
-    int getMale (yearADT * currentYear);
+    //int getMale (yearADT * currentYear);
+    //int getFemale(yearADT * currentYear);
+    //devuelve los totales de hombres y mujeres como parametro de salida
+    //en su nombre retorna el total de donde esta el current
+    int getTotals (yearADT yearSet, int * male, int * female);
 
-    int getFemale(yearADT * currentYear);
-
-    int getTotal (yearADT * currentYear);
+    //para Q2 el usuario invoca
+    void addYearTotal(yearADT yearSet, size_t male, size_t female);
 
 
 #endif
