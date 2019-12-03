@@ -39,4 +39,6 @@
 
     void nextProv(provADT set);
 
+    void freeSet(provADT set);
+
 #endif

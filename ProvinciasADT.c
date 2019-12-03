@@ -30,15 +30,17 @@ typedef struct provCDT
 
 static nodeProv * addProvRec(nodeProv * firstList, char * code, char * value, size_t * size);
 
-static int compare(const char * c1, const char * c2);
+//static int compare(const char * c1, const char * c2);
 static void printVec(provADT set);
 
-//static int binarySearch(tProvVec * datos, size_t dim, char * num, int * idx);
+static int binarySearch(tProvVec * datos, size_t dim, char * num, int * idx);
 static int binarySrch(tProvVec * prov, int min, int max, char * num);
 
 static void listToArray(provADT set);
 
 static void freeListRec(nodeProv * first);
+
+void alphaSort(provADT set);
 
 provADT
 newSet(void)
@@ -89,7 +91,8 @@ void finalizeProvAddition(provADT set)
     //printf("Esta el codigo %i\n", binarySearch(set->provVec,set->qProv, aBuscar));
 }
 
-static void listToArray(provADT set)
+static void
+listToArray(provADT set)
 {
     int i = 0;
     nodeProv * aux = set->firstList;
@@ -103,6 +106,26 @@ static void listToArray(provADT set)
 
         aux = aux->tail;
         i++;
+    }
+}
+
+void
+alphaSort(provADT set)
+{
+    int dim = set->qProv;
+    tProvVec aux;
+
+    for(int i = 0; i < dim; i++)
+    {
+        for(int j = i + 1; j < dim; j++)
+        {
+            if(strcmp(set->provVec[i].value, set->provVec[j].value) > 0)
+            {
+                aux = set->provVec[i];
+                set->provVec[i] = set->provVec[j];
+                set->provVec[j] = aux;
+            }
+        }
     }
 }
 /*
@@ -249,7 +272,9 @@ int addBirth(provADT set, char * year, char * provres, char * gen)
     }
     return set->total != currentTotal;
 }
-void printVec(provADT set)
+
+static void
+printVec(provADT set)
 {
     printf("Tamaño: %ld\n", set->qProv);
     for(int i = 0; i < set->qProv; i++)

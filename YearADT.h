@@ -1,6 +1,7 @@
 #ifndef _yearADT_h
 #define _yearADT_h
 
+    #include <stdio.h>
 	#include <stddef.h>
     #include <stdlib.h>
 
@@ -24,5 +25,6 @@
     //para Q2 el usuario invoca
     void addYearTotal(yearADT yearSet, size_t male, size_t female);
 
+    void freeYears(yearADT years);
 
 #endif

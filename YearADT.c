@@ -2,9 +2,10 @@
 #include <stddef.h>
 #define MALE 1
 #define FEMALE 2
+
 typedef struct nodeYear //estructura para el año Funciona como lista
 {
-    unsigned int year;
+    int year;
     size_t male;    //Cantidad de hombres
     size_t female;  //Cantidad de mujeres
     struct nodeYear * tail;
@@ -16,6 +17,7 @@ typedef struct yearCDT
   nodeYear * current;
 } yearCDT;
 
+static void freeYearRec(nodeYear * first);
 
 static int
 compare(unsigned int  c1, unsigned int c2)
@@ -39,9 +41,9 @@ addByGender(nodeYear * node, int gen)
 nodeYear *
 addYearRec(nodeYear * node, int year, int gen, int * flag)
 {
-    if(node == NULL || year<node->year)
+    if(node == NULL || year < node->year )
     {
-        nodeYear * aux = malloc(sizeof(nodeYear));
+        nodeYear * aux = calloc(1,sizeof(nodeYear));
         aux->tail = node;
         aux->year = year;
         addByGender(aux,gen);
@@ -65,4 +67,27 @@ addYear (yearADT yearSet, int year, int gen)
     printf("ADD YEAR\n");
     yearSet->firstYear = addYearRec(yearSet->firstYear,year,gen,&flag);
     return flag;
+}
+
+void freeYears(yearADT years)
+{
+	if(years != NULL)
+	{
+		freeYearRec(years->firstYear);
+		free(years);
+	}
+
+}
+
+static void
+freeYearRec(nodeYear * first)
+{
+	if(first == NULL)
+	{
+		return;
+	}
+
+	freeYearRec(first->tail);
+	free(first);
+	return;
 }
