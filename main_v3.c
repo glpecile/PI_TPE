@@ -32,7 +32,7 @@ int main (int argc, char * argv[])
 
     provADT set = newSet();
 
-    //readProvs(provincias, set);
+    readProvs(provincias, set);
     printf("\nImpresion de lista:\n");
     //printProv(set);
     query(set);
@@ -63,16 +63,16 @@ void
 readBirths(FILE * nacimientos, provADT set)
 {
     char text1[MAX_TEXT];
-    char provres[2];
-    char year[4];
-    char gen[1];
-    char not[1];
+    char provres[3];
+    char year[5];
+    char gen[2];
+    char not[2];
 
     //CARGAMOS LOS NACIMIENTOS
     //while(fgetc(nacimientos)!='\n');
     fgets(text1, MAX_TEXT, nacimientos); //Elimina encabezado
     printf("AN\tPROV\tGEN\n");
-    while(fscanf(nacimientos,"%[^,],%[^,],%[*],%[^,],%[*][MAX_TEXT]\n",year,provres,not,gen,text1) == 4)
+    while(fscanf(nacimientos,"%[^,],%[^,],%[^,],%[^,],%[^\n]\n",year,provres,not,gen,text1) == 5)
     {
         printf("%s\t%s\t%s\n",year,provres,gen);
         //addYear(set,year,provres,gen);
