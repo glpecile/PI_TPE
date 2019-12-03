@@ -34,7 +34,7 @@ static nodeProv * addProvRec(nodeProv * firstList, char * code, char * value, si
 static void printVec(provADT set);
 
 static int binarySearch(tProvVec * datos, size_t dim, char * num, int * idx);
-static int binarySrch(tProvVec * prov, int min, int max, char * num);
+//static int binarySrch(tProvVec * prov, int min, int max, char * num);
 
 static void listToArray(provADT set);
 
@@ -210,17 +210,17 @@ nextProv(provADT set)
 static int
 binarySearch(tProvVec * prov, size_t dim, char * num, int * idx)
 {
-    int a = dim%2;
+
 
     if(dim == 0)
     {
-        return -1000;
+        return -1;
     }
     int comp = strcmp(prov[dim/2].code, num);
     if(comp == 0)
     {
         *idx +=dim/2;
-        return dim/2+a;
+        return dim/2;
     }
 
     if(comp>0)
@@ -228,9 +228,9 @@ binarySearch(tProvVec * prov, size_t dim, char * num, int * idx)
         return binarySearch(prov, dim/2, num, idx);
     }
     *idx += dim/2 + 1;
-    return binarySearch(prov + dim/2 + 1, dim/2, num, idx)+dim/2+a;
+    return binarySearch(prov + dim/2 + 1, dim/2, num, idx);
 }
-
+/*
 static int
 binarySrch(tProvVec * prov, int min, int max, char * num)
 {
@@ -249,24 +249,14 @@ binarySrch(tProvVec * prov, int min, int max, char * num)
     }
     return binarySrch(prov, (max-min)/2 + 1, max, num);
 }
-
+*/
 int addBirth(provADT set, char * year, char * provres, char * gen)
 {
-    char aux[3];
-    aux[2] = 0;
     int idx;
-    for(int i = 0; i < 100; i++)
-    {
-        idx=0;
-        aux[1] = (i % 10) + '0';
-        aux[0] = ((i / 10) % 10) + '0';
-        binarySearch(set->provVec,set->qProv, aux, &idx);
-        //idx = binarySrch(set->provVec, 0, set->qProv - 1, aux);
-        printf("Codigo: %s\ti: %d\tIndice: %d\n",aux, i,  idx);
-    }
+    int flag = binarySearch(set->provVec,set->qProv, provres, &idx);
     size_t currentTotal=set->total;
     printf("Teremino el binary\tIndice: %d\n", idx);
-    if (addYear(set->provVec[idx].years,atoi(year),atoi(gen)) && idx!=-1)
+    if (flag!=-1 && addYear(set->provVec[idx].years, atoi(year), atoi(gen)))
     {
         printf("%ld\n", set->total++);
     }
