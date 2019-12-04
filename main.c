@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "provinciasADT.h"
 #include "yearADT.h"
 
 #define MAX_TEXT 100
 
+//13 216 110
+//AN,PROVRES,TIPPARTO,SEXO,IMEDAD,ITIEMGEST,IMINSTRUC,IPESONAC,CUENTA
 /*Prototipos funciones auxiliares de main
 */
 void readProvs(FILE * provincias, provADT set);
@@ -16,6 +19,9 @@ void readBirths(FILE * nacimientos, provADT set);
 int 
 main (int argc, char * argv[])
 {
+    time_t tStart, tFinish;
+    tStart = time(NULL);
+
     if(argc == 3)
     {
         printf("Archivos ingresados:\n\t->%s\n\t->%s\n\n", argv[1], argv[2]);
@@ -39,8 +45,8 @@ main (int argc, char * argv[])
 
     readProvs(provincias, set);
     
-    //printf("\nImpresion de lista:\n");
-    //printProv(set);
+    printf("\nProvincias cargadas:\n\n");
+    printProv(set);
     
     readBirths(nacimientos, set);
     
@@ -52,6 +58,8 @@ main (int argc, char * argv[])
     fclose(nacimientos);
 
     printf("Finalizo el programa\n");
+    tFinish = time(NULL);
+    printf("Tiempo de Ejecución: %ds\n", (int)(tFinish - tStart));
     return 0;
 }
 
@@ -65,7 +73,7 @@ readProvs(FILE * provincias, provADT set)
 
     fgets(prov, MAX_TEXT, provincias); //Elimina encabezado
 
-    printf("CARGA DE DATOS...\n");
+    printf("\nCARGANDO PROVINCIAS...\n");
     while(fscanf(provincias,"%d,%[^\r\n]\n", &cod, prov) == 2)
     {
         addProv(set, cod, prov);
@@ -79,11 +87,11 @@ readBirths(FILE * nacimientos, provADT set)
     char aux[MAX_TEXT];
     int provres, year, gen, tipoParto;
 
-    unsigned long i=1;
+    unsigned long i = 0;
 
-    //CARGAMOS LOS NACIMIENTOS
     fgets(aux, MAX_TEXT, nacimientos); //Elimina encabezado
 
+    printf("\nCARGANDO NACIMIENTOS...\n");
     while(fscanf(nacimientos, "%4d,%d,%d,%d,%[^\r\n]\n", &year, &provres, &tipoParto, &gen,aux) == 5)
     {
         i++;

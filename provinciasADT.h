@@ -10,7 +10,7 @@ typedef struct provCDT * provADT;
 
 /*
 */
-provADT newSet(void); //Ingreso de Datos de un nuevo pais
+provADT newSet(void);
 
 /*
 */
@@ -39,6 +39,10 @@ int hasNextProv(provADT set);
 /*
 */
 void nextProv(provADT set);
+
+/*
+*/
+int getTotalProv(provADT set, yearADT yearSet);
 
 /*
 */

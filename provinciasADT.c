@@ -39,7 +39,8 @@ typedef struct provCDT
 */
 static nodeProv * addProvRec(nodeProv * firstList, int code, char * value, size_t * size);
 static void listToArray(provADT set);
-static int binarySearch(tProvVec * datos, size_t dim, int num, int * idx);
+static int binarySearch(tProvVec * prov, size_t dim, int num);/*BinarySearch V2.0*/ 
+//static int binarySearch(tProvVec * datos, size_t dim, int num, int * idx);
 static void freeListRec(nodeProv * first);
 
 static int 
@@ -120,9 +121,62 @@ listToArray(provADT set)
         i++;
     }
 }
-
+/*PRUEBA ADDBIRTH 2.0
+*/
 /*
 */
+int addBirth(provADT set, int year, int provres, int gen)
+{
+    int idx = binarySearch(set->provVec, set->qProv, provres);
+    size_t currentTotal = set->total;
+
+    /*for(int i = 0; i < 100; i++)
+    {
+        int idx = binarySearch(set->provVec, set->qProv, i);
+        if(idx >= 0)
+            printf("IDX: %d - PROV: %d\n", idx, set->provVec[idx].code);
+        else
+            printf("IDX: %d\n", idx);
+    }*/
+
+    if(idx >= 0 && addInYear(set->provVec[idx].years, year, gen))
+    {
+        (set->total)++;
+    }
+
+    return set->total != currentTotal;
+}
+
+static int
+binarySearch(tProvVec * prov, size_t dim, int num)
+{
+    int left = 0, right = dim - 1, idx;
+    int comp;
+
+    while(left <= right)
+    {
+        idx = (left + right) / 2;
+        comp = compare(prov[idx].code, num);
+
+        if(comp == 0)
+        {
+            return idx;
+        }
+        else if(comp > 0)
+        {
+            right = idx - 1;
+        }
+        else
+        {
+            left = idx + 1;
+        }
+    }
+    return idx = -1;
+}
+
+
+
+/*
 int addBirth(provADT set, int year, int provres, int gen)
 {
     int idx=0;
@@ -136,12 +190,12 @@ int addBirth(provADT set, int year, int provres, int gen)
 
     return set->total != currentTotal;
 }
-
+*/
 /*Retorna -1 si el elemento num no se encuentra
 **Retorna mayor que cero si el elemento num se encuentra
 **En el parametro de entrada/salida idx devuelve la posicion en 
 **la que se encuentra 
-*/
+*//*
 static int
 binarySearch(tProvVec * prov, size_t dim, int num, int * idx)
 {
@@ -166,6 +220,7 @@ binarySearch(tProvVec * prov, size_t dim, int num, int * idx)
     *idx += dim/2 + 1;
     return binarySearch(prov + dim/2 + 1, dim - dim/2 - 1, num, idx);
 }
+*/
 
 /*
 */
@@ -256,7 +311,7 @@ printProv(provADT set)
     int i=0;
     while(aux != NULL)
     {
-        printf("idx:%d\t COD: %d\tPROV: %s\n", i++, aux->code, aux->value);
+        printf("idx: %2d\t COD: %2d\tPROV: %s\n", i++, aux->code, aux->value);
         aux = aux->tail;
     }
     return;
