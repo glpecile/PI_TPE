@@ -25,25 +25,29 @@ typedef struct provCDT
 {
     size_t total;//Cantidad de nacimientos en el pais
     size_t qProv; //Cantidad de Provincias
+    int current; //iterador de provVec
     tProvVec * provVec; //vector a ser creado en listToArray
     nodeProv * firstList; //Lista en donde se cargan las provincias ordenadas por codigo
-    int current;
 }provCDT;
 
 /*
 */
-
-
+static void
+Error(const char* s)
+{
+	fprintf(stderr, "%s\n", s);
+	exit(EXIT_FAILURE);
+}
 
 /*PROTOTIPO Funciones auxiliares de provinciasADT
 */
 static nodeProv * addProvRec(nodeProv * firstList, int code, char * value, size_t * size);
 static void listToArray(provADT set);
-static int binarySearch(tProvVec * prov, size_t dim, int num);/*BinarySearch V2.0*/ 
+static int binarySearch(tProvVec * prov, size_t dim, int num);/*BinarySearch V2.0*/
 //static int binarySearch(tProvVec * datos, size_t dim, int num, int * idx);
 static void freeListRec(nodeProv * first);
 
-static int 
+static int
 compare(unsigned int  c1, unsigned int c2)
 {
     return c1-c2;
@@ -139,7 +143,7 @@ int addBirth(provADT set, int year, int provres, int gen)
             printf("IDX: %d\n", idx);
     }*/
 
-    if(idx >= 0 && addInYear(set->provVec[idx].years, year, gen))
+    if(idx >= 0 && addInYear(set->provVec[idx].years, year, gen, 1))
     {
         (set->total)++;
     }
@@ -193,8 +197,8 @@ int addBirth(provADT set, int year, int provres, int gen)
 */
 /*Retorna -1 si el elemento num no se encuentra
 **Retorna mayor que cero si el elemento num se encuentra
-**En el parametro de entrada/salida idx devuelve la posicion en 
-**la que se encuentra 
+**En el parametro de entrada/salida idx devuelve la posicion en
+**la que se encuentra
 *//*
 static int
 binarySearch(tProvVec * prov, size_t dim, int num, int * idx)
@@ -266,6 +270,41 @@ void
 nextProv(provADT set)
 {
     (set->current)++;
+    return;
+}
+
+/*Devuelve el total de la provincia donde está el currentTotal
+**En la estructura de entrada/salida yearSet va guardando el
+**total de nacimientos por año
+*/
+int
+getTotalProv(provADT set, yearADT yearSet)
+{
+    size_t totalProv = 0;
+    size_t male, female, ns;
+    int year;
+
+    toBeginYear(set->provVec[set->current].years);
+    while(hasNextYear(set->provVec[set->current].years))
+    {
+        totalProv += getCurrentTotals(set->provVec[set->current].years, &male, &female, &ns, &year);
+        //printf("%lu\t%lu\t%lu\tAÑO: %d\n", male, female, ns, year);
+        if(!addInYear(yearSet, year, MALE, male) || !addInYear(yearSet, year, FEMALE, female)
+            || !addInYear(yearSet, year, NOT_SPECIFIED, ns))
+        {
+            printf("No se pudo agregar\n");
+        }
+        nextYear(set->provVec[set->current].years);
+    }
+    return totalProv;
+}
+
+/*
+*/
+char *
+getName(provADT set)
+{
+    return set->provVec[set->current].value;
 }
 
 /*Libera el provADT

@@ -8,15 +8,14 @@
 
 #define MAX_TEXT 100
 
-//13 216 110
-//AN,PROVRES,TIPPARTO,SEXO,IMEDAD,ITIEMGEST,IMINSTRUC,IPESONAC,CUENTA
 /*Prototipos funciones auxiliares de main
 */
 void readProvs(FILE * provincias, provADT set);
 void readBirths(FILE * nacimientos, provADT set);
+void mainQuery(provADT set);
 
 
-int 
+int
 main (int argc, char * argv[])
 {
     time_t tStart, tFinish;
@@ -44,16 +43,16 @@ main (int argc, char * argv[])
     provADT set = newSet();
 
     readProvs(provincias, set);
-    
+
     printf("\nProvincias cargadas:\n\n");
     printProv(set);
-    
+
     readBirths(nacimientos, set);
-    
-    query(set);
-    
+
+    mainQuery(set);
+
     freeSet(set);
-    
+
     fclose(provincias);
     fclose(nacimientos);
 
@@ -98,6 +97,38 @@ readBirths(FILE * nacimientos, provADT set)
         addBirth(set, year, provres, gen);
     }
     printf("LINEAS LEIDAS: %lu\n", i);
+}
+
+void
+mainQuery(provADT set)
+{
+    FILE * file1 = fopen("query1.csv", "w");
+    FILE * file2 = fopen("query2.csv", "w");
+    FILE * file3 = fopen("query3.csv", "w");
+
+    yearADT auxYearSet = newYears();
+    char * nameProv;
+    size_t totalProv;
+
+    fprintf(file1, "Provincias,Codigo\n");
+    fprintf(file2, "Año,Varón,Mujer\n");
+    fprintf(file3, "Provincia,Porcentaje\n");
+
+    toBeginProv(set);
+    while(hasNextProv(set))
+    {
+        //printf("Hay prov\n");
+        nameProv = getName(set);
+        totalProv = getTotalProv(set, auxYearSet);
+        fprintf(file1, "%s,%lu\n", nameProv, totalProv);
+
+        nextProv(set);
+    }
+
+    freeYears(auxYearSet);
+    fclose(file1);
+    fclose(file2);
+    fclose(file3);
 }
 
 /*

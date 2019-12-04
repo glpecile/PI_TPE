@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "yearADT.h"
 
 typedef struct provCDT * provADT;
 
@@ -43,6 +44,10 @@ void nextProv(provADT set);
 /*
 */
 int getTotalProv(provADT set, yearADT yearSet);
+
+/*
+*/
+char * getName(provADT set);
 
 /*
 */

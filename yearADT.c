@@ -5,7 +5,7 @@ typedef struct nodeYear //estructura para el año Funciona como lista
     int year;
     size_t male;    //Cantidad de hombres
     size_t female;  //Cantidad de mujeres
-    //size_t ns 	//Cantidad de no especificado
+    size_t ns; 	//Cantidad de no especificado
     struct nodeYear * tail;
 }nodeYear;
 
@@ -15,11 +15,17 @@ typedef struct yearCDT
 	nodeYear * currentYear;
 }yearCDT;
 
+static void
+Error(const char* s)
+{
+	fprintf(stderr, "%s\n", s);
+	exit(EXIT_FAILURE);
+}
 
 /*Funciones auxiliares de yearADT
 */
-static nodeYear * addYearRec(nodeYear * node, int year, int gen, int * flag);
-static void addByGender(nodeYear * node, int gen);
+static nodeYear * addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag);
+static void addByGender(nodeYear * node, int gen, size_t qty);
 static void freeYearRec(nodeYear * first);
 
 
@@ -33,13 +39,13 @@ yearADT newYears (void)
 }
 
 /*Recibe el set->provVec->years y crea un nodo nuevo si el año no existe
-**Si el año ya existe, se 
+**Si el año ya existe, se
 */
-int addInYear (yearADT yearSet, int year, int gen)
+int addInYear (yearADT yearSet, int year, int gen, size_t qty)
 {
     int flag = 0;
 
-    yearSet->firstYear = addYearRec(yearSet->firstYear, year, gen, &flag);
+    yearSet->firstYear = addYearRec(yearSet->firstYear, year, gen, qty, &flag);
 
     return flag;
 }
@@ -47,7 +53,7 @@ int addInYear (yearADT yearSet, int year, int gen)
 /*
 */
 static nodeYear *
-addYearRec(nodeYear * node, int year, int gen, int * flag)
+addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag)
 {
     if(node == NULL || year < node->year )
     {
@@ -56,40 +62,40 @@ addYearRec(nodeYear * node, int year, int gen, int * flag)
         aux->tail = node;
         aux->year = year;
 
-        addByGender(aux, gen);
+        addByGender(aux, gen, qty);
 
         *flag = 1;
         return aux;
     }
     if(year == node->year)
     {
-        addByGender(node,gen);
+        addByGender(node,gen, qty);
         *flag = 1;
         return node;
     }
-    node->tail = addYearRec(node->tail,year,gen,flag);
+    node->tail = addYearRec(node->tail, year, gen, qty, flag);
     return node;
 }
 
 static void
-addByGender(nodeYear * node, int gen)
+addByGender(nodeYear * node, int gen, size_t qty)
 {
 	switch(gen)
 	{
 		case MALE:
 		{
-			(node->male)++;
+			(node->male)+= qty;
 		}break;
 
 		case FEMALE:
-		{	
-			(node->female)++;
+		{
+			(node->female)+= qty;
 		}break;
 
-		/*case NOT_SPECIFIED:
+		case NOT_SPECIFIED:
 		{
-			(node->ns)++;
-		}break;*/
+			(node->ns)+= qty;
+		}break;
 	}
 
 	return;
@@ -97,36 +103,43 @@ addByGender(nodeYear * node, int gen)
 
 /*int getMale (yearADT * currentYear);
 **int getFemale(yearADT * currentYear);
-**devuelve los totales de hombres y mujeres como parametro de salida
+**devuelve los totales de hombres, mujeres y ns como parametro de salida
 **en su nombre retorna el total de donde esta el current
 */
-int 
-getTotals(yearADT yearSet, int * male, int * female/*, int * ns*/)
+int
+getCurrentTotals(yearADT yearSet, size_t * male, size_t * female, size_t * ns, int * year)
 {
-	return 0;
+    *male = yearSet->currentYear->male;
+    *female = yearSet->currentYear->female;
+    *ns = yearSet->currentYear->ns;
+    *year = yearSet->currentYear->year;
+	return (*male + *female + *ns);
 }
 
 /*Permite añadir las cantidad male y female en el año
 **donde esta parado current
 */
-void 
-addYearTotal(yearADT yearSet, size_t male, size_t female/*, size_t ns*/)
+void
+addCurrentYearTotal(yearADT yearSet, size_t male, size_t female, size_t ns)
 {
+    yearSet->currentYear->male = male;
+    yearSet->currentYear->female = female;
+    yearSet->currentYear->ns = ns;
 	return;
 }
 
 /*
 */
-void 
-toBeginYear (yearADT yearSet)
+void
+toBeginYear(yearADT yearSet)
 {
 	yearSet->currentYear = yearSet->firstYear;
 }
 
 /*
 */
-void 
-nextYear (yearADT yearSet)
+void
+nextYear(yearADT yearSet)
 {
 	yearSet->currentYear = yearSet->currentYear->tail;
 	return;
@@ -134,7 +147,7 @@ nextYear (yearADT yearSet)
 
 /*
 */
-int hasNextYear (yearADT yearSet)
+int hasNextYear(yearADT yearSet)
 {
 	return yearSet->currentYear != NULL;
 }
