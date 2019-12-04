@@ -1,27 +1,27 @@
-Provincias,Codigo
-Ciudad Aut. de Buenos Aires,2
-Buenos Aires,13
-Catamarca,1
-Cordoba,4
-Corrientes,3
-Chaco,1
-Chubut,1
-Entre Rios,2
-Formosa,3
-Jujuy,1
-La Pampa,0
-La Rioja,0
-Mendoza,6
-Misiones,1
-Neuquen,0
-Rio Negro,1
-Salta,2
-San Juan,0
-San Luis,0
-Santa Cruz,0
-Santa Fe,5
-Santiago del Estero,1
-Tucuman,0
-Tierra del Fuego,2
-Otro pais,0
-Lugar no especificado,0
+Provincias;Codigo
+Buenos Aires;822715
+Catamarca;19912
+Chaco;71100
+Chubut;28489
+Ciudad Aut. de Buenos Aires;117842
+Cordoba;169822
+Corrientes;60678
+Entre Rios;67733
+Formosa;35291
+Jujuy;37430
+La Pampa;15599
+La Rioja;18351
+Lugar no especificado;7783
+Mendoza;100274
+Misiones;78225
+Neuquen;33473
+Otro pais;786
+Rio Negro;36171
+Salta;81666
+San Juan;42890
+San Luis;22830
+Santa Cruz;18202
+Santa Fe;166616
+Santiago del Estero;54359
+Tierra del Fuego;8584
+Tucuman;85863

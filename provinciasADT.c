@@ -5,7 +5,7 @@
 */
 typedef struct nodeProv //Se utiliza unicamente para cargar los datos.
 {
-    int code; //Codigo de identificacion de la Provincia
+    int code; //Identificacion de la Provincia
     char * value; //Nombre de la Provincia
     struct nodeProv * tail;
 }nodeProv;
@@ -30,21 +30,19 @@ typedef struct provCDT
     nodeProv * firstList; //Lista en donde se cargan las provincias ordenadas por codigo
 }provCDT;
 
-/*
-*/
-static void
-Error(const char* s)
+typedef struct tPercentList
 {
-	fprintf(stderr, "%s\n", s);
-	exit(EXIT_FAILURE);
-}
+    nodeProv * first;
+    nodeProv * current;
+    size_t size;
+}tPercentList;
+
 
 /*PROTOTIPO Funciones auxiliares de provinciasADT
 */
 static nodeProv * addProvRec(nodeProv * firstList, int code, char * value, size_t * size);
 static void listToArray(provADT set);
 static int binarySearch(tProvVec * prov, size_t dim, int num);/*BinarySearch V2.0*/
-//static int binarySearch(tProvVec * datos, size_t dim, int num, int * idx);
 static void freeListRec(nodeProv * first);
 
 static int
@@ -125,23 +123,13 @@ listToArray(provADT set)
         i++;
     }
 }
-/*PRUEBA ADDBIRTH 2.0
-*/
+
 /*
 */
 int addBirth(provADT set, int year, int provres, int gen)
 {
     int idx = binarySearch(set->provVec, set->qProv, provres);
     size_t currentTotal = set->total;
-
-    /*for(int i = 0; i < 100; i++)
-    {
-        int idx = binarySearch(set->provVec, set->qProv, i);
-        if(idx >= 0)
-            printf("IDX: %d - PROV: %d\n", idx, set->provVec[idx].code);
-        else
-            printf("IDX: %d\n", idx);
-    }*/
 
     if(idx >= 0 && addInYear(set->provVec[idx].years, year, gen, 1))
     {
@@ -177,54 +165,6 @@ binarySearch(tProvVec * prov, size_t dim, int num)
     }
     return idx = -1;
 }
-
-
-
-/*
-int addBirth(provADT set, int year, int provres, int gen)
-{
-    int idx=0;
-    int flag = binarySearch(set->provVec,set->qProv, provres, &idx);
-    size_t currentTotal=set->total;
-
-    if (flag!=-1 && addInYear(set->provVec[idx].years, year, gen))
-    {
-        set->total++;
-    }
-
-    return set->total != currentTotal;
-}
-*/
-/*Retorna -1 si el elemento num no se encuentra
-**Retorna mayor que cero si el elemento num se encuentra
-**En el parametro de entrada/salida idx devuelve la posicion en
-**la que se encuentra
-*//*
-static int
-binarySearch(tProvVec * prov, size_t dim, int num, int * idx)
-{
-    if(dim == 0)
-    {	*idx = -1;
-        return -1;
-    }
-
-    int comp = compare(prov[dim/2].code, num);
-
-    if(comp == 0)
-    {
-        *idx += dim/2;
-        return dim/2;
-    }
-
-    if(comp > 0)
-    {
-        return binarySearch(prov, dim/2, num, idx);
-    }
-
-    *idx += dim/2 + 1;
-    return binarySearch(prov + dim/2 + 1, dim - dim/2 - 1, num, idx);
-}
-*/
 
 /*
 */
@@ -288,7 +228,6 @@ getTotalProv(provADT set, yearADT yearSet)
     while(hasNextYear(set->provVec[set->current].years))
     {
         totalProv += getCurrentTotals(set->provVec[set->current].years, &male, &female, &ns, &year);
-        //printf("%lu\t%lu\t%lu\tAÑO: %d\n", male, female, ns, year);
         if(!addInYear(yearSet, year, MALE, male) || !addInYear(yearSet, year, FEMALE, female)
             || !addInYear(yearSet, year, NOT_SPECIFIED, ns))
         {
@@ -297,6 +236,22 @@ getTotalProv(provADT set, yearADT yearSet)
         nextYear(set->provVec[set->current].years);
     }
     return totalProv;
+}
+
+/*
+*/
+size_t
+getTotalSet(provADT set)
+{
+    return set->total;
+}
+
+/*
+*/
+size_t
+getQtyProv(provADT set)
+{
+    return set->qProv;
 }
 
 /*

@@ -7,13 +7,17 @@
 #include "yearADT.h"
 
 #define MAX_TEXT 100
+#define BLOQUE 5
 
 /*Prototipos funciones auxiliares de main
 */
 void readProvs(FILE * provincias, provADT set);
 void readBirths(FILE * nacimientos, provADT set);
 void mainQuery(provADT set);
-
+void query1(FILE * file1, char * name, size_t totalProv);
+void query2(FILE * file2, int year, size_t male, size_t female);
+void query3(FILE * file3, char ** provs, size_t * pcts, int dim);
+//void addPct(char ** provs, size_t ** pcts, char * name, size_t auxPct, int dim);
 
 int
 main (int argc, char * argv[])
@@ -36,7 +40,7 @@ main (int argc, char * argv[])
 
     if(provincias == NULL || nacimientos == NULL)
     {
-        printf("No se puedo abrir el archivo\n");
+        printf("No se pudo abrir el archivo\n");
         exit(2);
     }
 
@@ -44,19 +48,21 @@ main (int argc, char * argv[])
 
     readProvs(provincias, set);
 
-    printf("\nProvincias cargadas:\n\n");
-    printProv(set);
+    printf("Provincias cargadas\n\n");
+    //printProv(set);
 
     readBirths(nacimientos, set);
+    printf("Nacimientos cargados\n\n");
 
     mainQuery(set);
+    printf("ARCHIVOS GENERADOS\n");
 
     freeSet(set);
 
     fclose(provincias);
     fclose(nacimientos);
 
-    printf("Finalizo el programa\n");
+    printf("PROGRAMA FINALIZADO\n");
     tFinish = time(NULL);
     printf("Tiempo de Ejecución: %ds\n", (int)(tFinish - tStart));
     return 0;
@@ -86,17 +92,13 @@ readBirths(FILE * nacimientos, provADT set)
     char aux[MAX_TEXT];
     int provres, year, gen, tipoParto;
 
-    unsigned long i = 0;
-
     fgets(aux, MAX_TEXT, nacimientos); //Elimina encabezado
 
     printf("\nCARGANDO NACIMIENTOS...\n");
     while(fscanf(nacimientos, "%4d,%d,%d,%d,%[^\r\n]\n", &year, &provres, &tipoParto, &gen,aux) == 5)
     {
-        i++;
         addBirth(set, year, provres, gen);
     }
-    printf("LINEAS LEIDAS: %lu\n", i);
 }
 
 void
@@ -106,32 +108,142 @@ mainQuery(provADT set)
     FILE * file2 = fopen("query2.csv", "w");
     FILE * file3 = fopen("query3.csv", "w");
 
+    /*Variables para el query1
+    */
     yearADT auxYearSet = newYears();
     char * nameProv;
     size_t totalProv;
+    size_t totalSet = getTotalSet(set);
+    printf("TOTAL NACIMIENTOS: %lu\n", totalSet);
 
-    fprintf(file1, "Provincias,Codigo\n");
-    fprintf(file2, "Año,Varón,Mujer\n");
-    fprintf(file3, "Provincia,Porcentaje\n");
+    /*Variables para el query2
+    */
+    size_t male, female, ns;
+    int year;
+
+    /*Variables para el query3
+    */
+    size_t auxPct;
+    size_t * pcts = NULL;
+    char ** provs = NULL;
+    int dim = 0;
+
+
+    fprintf(file1, "Provincias;Codigo\n");
+    fprintf(file2, "Año;Varón;Mujer\n");
+    fprintf(file3, "Provincia;Porcentaje\n");
+
+    alphaSort(set);
 
     toBeginProv(set);
+
     while(hasNextProv(set))
     {
         //printf("Hay prov\n");
         nameProv = getName(set);
         totalProv = getTotalProv(set, auxYearSet);
-        fprintf(file1, "%s,%lu\n", nameProv, totalProv);
+        query1(file1, nameProv, totalProv);
+
+        if((auxPct = (totalProv * 100) / totalSet) > 0)
+        {
+            if(dim % BLOQUE == 0)
+            {
+                provs = realloc(provs, (dim + BLOQUE) * sizeof(char *));
+                pcts = realloc(pcts, (dim + BLOQUE) * sizeof(size_t));
+            }
+
+            provs[dim] = nameProv;
+            pcts[dim] = auxPct;
+            dim++;
+        }
 
         nextProv(set);
     }
 
+    toBeginYear(auxYearSet);
+    while(hasNextYear(auxYearSet))
+    {
+        getCurrentTotals(auxYearSet, &male, &female, &ns, &year);
+        query2(file2, year, male, female);
+        nextYear(auxYearSet);
+    }
+
+    provs = realloc(provs, dim * sizeof(char *));
+    pcts = realloc(pcts, dim * sizeof(size_t));
+    query3(file3, provs, pcts, dim);
+
+    free(provs);
+    free(pcts);
     freeYears(auxYearSet);
     fclose(file1);
     fclose(file2);
     fclose(file3);
+    return;
+}
+
+void
+query1(FILE * file1, char * nameProv, size_t totalProv)
+{
+    fprintf(file1, "%s;%lu\n", nameProv, totalProv);
+    return;
+}
+
+void
+query2(FILE * file2, int year, size_t male, size_t female)
+{
+    fprintf(file2, "%d;%lu;%lu\n", year, male, female);
+    return;
+}
+
+void
+query3(FILE * file3, char ** provs, size_t * pcts, int dim)
+{
+    int max = 0;
+
+    for(int i = 0; i < dim; i++)
+    {
+        for(int j = 0; j < dim; j++)
+        {
+            if (pcts[max] < pcts[j])
+            {
+                max = j;
+            }
+        }
+        fprintf(file3, "%s;%lu%%\n", provs[max], pcts[max]);
+        pcts[max] = 0;
+    }
+    return;
 }
 
 /*
+void
+addPct(char *** provs, size_t ** pcts, char * name, size_t auxPct, int dim)
+{
+    printf("dimension: %d\n", dim);
+    if(dim % BLOQUE == 0)
+    {
+        printf("Realoc\n");
+        *provs = realloc(*provs, (dim + BLOQUE) * sizeof(char *));
+        *pcts = realloc(*pcts, (dim + BLOQUE) * sizeof(size_t));
+        printf("Realocado\n");
+    }
+    else
+    {
+        printf("No entre al realoc\n");
+    }
+
+    provs[dim] = name;
+    pcts[dim] = auxPct;
+    printf("%s\t%lu\n", provs[dim], pcts[dim]);
+    printf("Fin addPct\n");
+
+    return;
+}
+*/
+
+/*
 gcc -Wall -pedantic -std=c99 -fsanitize=address -o prueba main.c
+make all
 ./prueba provincias.csv nacimientos2.csv
+make clean
 */

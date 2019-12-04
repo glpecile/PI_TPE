@@ -1,4 +1,4 @@
-#ifndef _provinciasADT_h
+#ifndef _provinciasADT_hProvincias
 #define _provinciasADT_h
 
 #include <stdio.h>
@@ -8,6 +8,7 @@
 #include "yearADT.h"
 
 typedef struct provCDT * provADT;
+typedef struct tPercentList * percentList;
 
 /*
 */
@@ -47,12 +48,19 @@ int getTotalProv(provADT set, yearADT yearSet);
 
 /*
 */
+size_t getTotalSet(provADT set);
+
+/*
+*/
+size_t getQtyProv(provADT set);
+
+/*
+*/
 char * getName(provADT set);
 
 /*
 */
 void freeSet(provADT set);
-
 
 //FUNCIONES AUXILIARES DE PRUEBA
     void printProv(provADT set);
