@@ -1,69 +1,58 @@
 #include "provinciasADT.h"
 #include "yearADT.h"
 
-/*
-*/
-typedef struct nodeProv //Se utiliza unicamente para cargar los datos.
+//Se utiliza unicamente para cargar los datos.
+typedef struct nodeProv
 {
-    int code; //Identificacion de la Provincia
-    char * value; //Nombre de la Provincia
+    int code;   //Identificacion de la provincia.
+    char * value;   //Nombre de la provincia.
     struct nodeProv * tail;
 }nodeProv;
 
-/*
-*/
+//Se utiliza para procesar los datos y facilita el ordenamiento y la busqueda.
 typedef struct tProvVec
 {
-    int code;  //Codigo de identificacion de la Provincia
-    char * value; //Nombre de la provincia
-    yearADT years; //Lista donde se almacena la cantidad de nacimientos por años
+    int code;   //identificador de la provincia.
+    char * value;   //Nombre de la provincia.
+    yearADT years;  //Lista donde se almacenan los nacimientos de la provincia por año.
 }tProvVec;
 
-/*
-*/
+//Estructura principal.
 typedef struct provCDT
 {
-    size_t total;//Cantidad de nacimientos en el pais
-    size_t qProv; //Cantidad de Provincias
-    int current; //iterador de provVec
-    tProvVec * provVec; //vector a ser creado en listToArray
-    nodeProv * firstList; //Lista en donde se cargan las provincias ordenadas por codigo
+    size_t total;   //Cantidad de nacimientos en el pais.
+    size_t qProv;   //Cantidad de Provincias.
+    int current;    //iterador de provVec.
+    tProvVec * provVec; //vector a ser creado en listToArray.
+    nodeProv * firstList;   //Lista en donde se cargan las provincias ordenadas por codigo.
 }provCDT;
 
-typedef struct tPercentList
-{
-    nodeProv * first;
-    nodeProv * current;
-    size_t size;
-}tPercentList;
+//Funciones static de provinciasADT:
 
-
-/*PROTOTIPO Funciones auxiliares de provinciasADT
-*/
-static nodeProv * addProvRec(nodeProv * firstList, int code, char * value, size_t * size);
+//Convierte a la lista firtsList en provVec.
 static void listToArray(provADT set);
-static int binarySearch(tProvVec * prov, size_t dim, int num);/*BinarySearch V2.0*/
+//Realiza el algoritmo de busqueda binaria sobre un tProvVec.
+static int binarySearch(tProvVec * prov, size_t dim, int num);
+//Añade recursivamente los nodos en orden por código.
+static nodeProv * addProvRec(nodeProv * firstList, int code, char * value, size_t * size);
+//Libera los nodos de la lista de provincias.
 static void freeListRec(nodeProv * first);
-
+//Compara dos variables de tipo unsigned int.
 static int
 compare(unsigned int  c1, unsigned int c2)
 {
     return c1-c2;
 }
 
+//Fin funciones static.
 
-/*FUNCIONES PRINCIPALES DEL TAD
-*/
-/*
-*/
+//FUNCIONES PRINCIPALES DEL TAD DE PROVINCIAS:
 provADT
 newSet(void)
 {
     return calloc (1,sizeof(provCDT));
 }
 
-/*
-*/
 int
 addProv(provADT set, int code, char * value)
 {
@@ -74,8 +63,6 @@ addProv(provADT set, int code, char * value)
     return auxQuant != set->qProv;
 }
 
-/*
-*/
 static nodeProv *
 addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
 {
@@ -97,15 +84,11 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
     return firstList;
 }
 
-/*
-*/
 void finalizeProvAddition(provADT set)
 {
     listToArray(set);
 }
 
-/*
-*/
 static void
 listToArray(provADT set)
 {
@@ -124,8 +107,6 @@ listToArray(provADT set)
     }
 }
 
-/*
-*/
 int addBirth(provADT set, int year, int provres, int gen)
 {
     int idx = binarySearch(set->provVec, set->qProv, provres);
@@ -166,8 +147,6 @@ binarySearch(tProvVec * prov, size_t dim, int num)
     return idx = -1;
 }
 
-/*
-*/
 void
 alphaSort(provADT set)
 {
@@ -188,24 +167,18 @@ alphaSort(provADT set)
     }
 }
 
-/*
-*/
 void
 toBeginProv(provADT set)
 {
     set->current = 0;
 }
 
-/*
-*/
 int
 hasNextProv(provADT set)
 {
     return set->current < set->qProv;
 }
 
-/*
-*/
 void
 nextProv(provADT set)
 {
@@ -213,10 +186,6 @@ nextProv(provADT set)
     return;
 }
 
-/*Devuelve el total de la provincia donde está el currentTotal
-**En la estructura de entrada/salida yearSet va guardando el
-**total de nacimientos por año
-*/
 int
 getTotalProv(provADT set, yearADT yearSet)
 {
@@ -238,32 +207,24 @@ getTotalProv(provADT set, yearADT yearSet)
     return totalProv;
 }
 
-/*
-*/
 size_t
 getTotalSet(provADT set)
 {
     return set->total;
 }
 
-/*
-*/
 size_t
 getQtyProv(provADT set)
 {
     return set->qProv;
 }
 
-/*
-*/
 char *
 getName(provADT set)
 {
     return set->provVec[set->current].value;
 }
 
-/*Libera el provADT
-*/
 void
 freeSet(provADT set)
 {
@@ -278,8 +239,6 @@ freeSet(provADT set)
     return;
 }
 
-/*Libera los nodos de la lista de provincias
-*/
 static void
 freeListRec(nodeProv * first)
 {
@@ -293,47 +252,4 @@ freeListRec(nodeProv * first)
     free(first);
 
     return;
-}
-
-
-/*FUNCIONES AUXILIARES DE PRUEBA
-*/
-void
-printProv(provADT set)
-{
-    nodeProv * aux = set->firstList;
-    int i=0;
-    while(aux != NULL)
-    {
-        printf("idx: %2d\t COD: %2d\tPROV: %s\n", i++, aux->code, aux->value);
-        aux = aux->tail;
-    }
-    return;
-}
-
-void
-printVec(provADT set)
-{
-    printf("Tamaño: %ld\n", set->qProv);
-    for(int i = 0; i < set->qProv; i++)
-    {
-        printf("%2d\t%s\n", set->provVec[i].code, set->provVec[i].value);
-    }
-}
-
-void
-query(provADT set)
-{
-    FILE * file1 = fopen("query1.csv", "w");
-
-    fprintf(file1, "Provincias,Codigo\n");
-
-    nodeProv * aux = set->firstList;
-    while(aux != NULL)
-    {
-        fprintf(file1, "%s,%2d\n", aux->value, aux->code);
-        aux = aux->tail;
-    }
-
-    fclose(file1);
 }

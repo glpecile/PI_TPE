@@ -9,14 +9,21 @@
 #define MAX_TEXT 100
 #define BLOQUE 5
 
-/*Prototipos funciones auxiliares de main
-*/
+//FUNCIONES AUXILIARES DE MAIN
+
+//Lee los datos del csv de provincias
 void readProvs(FILE * provincias, provADT set);
+//Lee los datos del csv de nacimientos
 void readBirths(FILE * nacimientos, provADT set);
+//Utiliza los datos procesados para invocar las queries, genera los archivos necesarios
 void mainQuery(provADT set);
+//Imprime la provincia junto con su cantidad de nacimientos en orden alfabetico al archivo query1
 void query1(FILE * file1, char * name, size_t totalProv);
+//Imprime el año junto con los nacimientos separados por sexo en orden ascendente (por año) al archivo query2
 void query2(FILE * file2, int year, size_t male, size_t female);
+//Imprime la provincia junto con su porcentaje asociado en orden descendente al archivo query3
 void query3(FILE * file3, char ** provs, size_t * pcts, int dim);
+//Agrega los porcentajes en orden descendente
 //void addPct(char *** provs, size_t ** pcts, char * nameProv, size_t auxPct, int dim);
 
 int
@@ -26,13 +33,13 @@ main (int argc, char * argv[])
     time_t tStart, tFinish;
     tStart = time(NULL);
 
-    if(argc == 3)
+    if(argc != 3)
     {
-        printf("Archivos ingresados:\n\t->%s\n\t->%s\n\n", argv[1], argv[2]);
+        error(1,"Cantidad de archivos incorrecta.");
     }
     else
     {
-        error(1,"Cantidad de archivos incorrecta.");
+        printf("Archivos ingresados:\n\t->%s\n\t->%s\n\n", argv[1], argv[2]);
     }
 
     FILE * provincias = fopen(argv[1], "rt");
@@ -40,7 +47,7 @@ main (int argc, char * argv[])
 
     if(provincias == NULL || nacimientos == NULL)
     {
-        error(2,"No se pudieron abrir los archivos");
+        error(2,"No se pudieron abrir los archivos.");
     }
 
 
@@ -48,11 +55,11 @@ main (int argc, char * argv[])
 
     readProvs(provincias, set);
 
-    printf("Provincias cargadas\n\n");
+    printf("Provincias cargadas.\n\n");
     //printProv(set);
 
     readBirths(nacimientos, set);
-    printf("Nacimientos cargados\n\n");
+    printf("Nacimientos cargados.\n\n");
 
     mainQuery(set);
     printf("ARCHIVOS GENERADOS\n");
@@ -69,8 +76,6 @@ main (int argc, char * argv[])
     return 0;
 }
 
-/*FUNCIONES AUXILIARES DE MAIN
-*/
 void
 readProvs(FILE * provincias, provADT set)
 {
@@ -109,27 +114,24 @@ mainQuery(provADT set)
     FILE * file2 = fopen("query2.csv", "w");
     FILE * file3 = fopen("query3.csv", "w");
 
-    /*Variables para el query1
-    */
+    //Variables para el query1
     yearADT auxYearSet = newYears();
     char * nameProv;
     size_t totalProv;
     size_t totalSet = getTotalSet(set);
     printf("TOTAL NACIMIENTOS: %lu\n", totalSet);
 
-    /*Variables para el query2
-    */
+    //Variables para el query2
     size_t male, female, ns;
     int year;
 
-    /*Variables para el query3
-    */
+    //Variables para el query3
     size_t auxPct;
     size_t * pcts = NULL;
     char ** provs = NULL;
     int dim = 0;
 
-
+    //Encabezados de query1, query2 y query3
     fprintf(file1, "Provincias;Codigo\n");
     fprintf(file2, "Año;Varón;Mujer\n");
     fprintf(file3, "Provincia;Porcentaje\n");
@@ -217,7 +219,7 @@ query3(FILE * file3, char ** provs, size_t * pcts, int dim)
     }
     return;
 }
-/*
+/*Arreglar
 void
 addPct(char *** provs, size_t ** pcts, char * nameProv, size_t auxPct, int dim)
 {
@@ -244,6 +246,7 @@ addPct(char *** provs, size_t ** pcts, char * nameProv, size_t auxPct, int dim)
 */
 
 /*
+Tutorial para compilar, borrar mas tarde
 gcc -Wall -pedantic -std=c99 -fsanitize=address -o prueba main.c
 make all
 ./prueba provincias.csv nacimientos2.csv

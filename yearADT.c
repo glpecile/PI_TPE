@@ -1,39 +1,38 @@
 #include "yearADT.h"
 
-typedef struct nodeYear //estructura para el año Funciona como lista
+//Estructura para los nacimientos por año, funciona como lista.
+typedef struct nodeYear
 {
-    int year;
-    size_t male;    //Cantidad de hombres
-    size_t female;  //Cantidad de mujeres
-    size_t ns; 	//Cantidad de no especificado
+    int year;   //Año en el que se encuantra.
+    size_t male;    //Cantidad de hombres.
+    size_t female;  //Cantidad de mujeres.
+    size_t ns;  //Cantidad de no especificado.
     struct nodeYear * tail;
 }nodeYear;
 
 typedef struct yearCDT
 {
-	nodeYear * firstYear;
-	nodeYear * currentYear;
+	nodeYear * firstYear;  //Primer nodo de la lista.
+	nodeYear * currentYear;    //Iterador de la lista.
 }yearCDT;
 
-/*Funciones auxiliares de yearADT
-*/
+//Funciones static de yearADT:
+
+//Añade un nodo de forma recursiva.
 static nodeYear * addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag);
+//Agrega al género indicado pasado como parámetro la cantidad pasada.
 static void addByGender(nodeYear * node, int gen, size_t qty);
+//Libera los nodos de la estructura de forma recursiva.
 static void freeYearRec(nodeYear * first);
 
+//Fin de funciones static.
 
-/*FUNCIONES PRINCIPALES DEL TAD
-*/
-/*
-*/
+//FUNCIONES PRINCIPALES DEL TAD DE NACIMIENTOS POR AÑO:
 yearADT newYears (void)
 {
 	return calloc(1,sizeof(yearCDT));
 }
 
-/*Recibe el set->provVec->years y crea un nodo nuevo si el año no existe
-**Si el año ya existe, se
-*/
 int addInYear (yearADT yearSet, int year, int gen, size_t qty)
 {
     int flag = 0;
@@ -43,8 +42,6 @@ int addInYear (yearADT yearSet, int year, int gen, size_t qty)
     return flag;
 }
 
-/*
-*/
 static nodeYear *
 addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag)
 {
@@ -94,11 +91,6 @@ addByGender(nodeYear * node, int gen, size_t qty)
 	return;
 }
 
-/*int getMale (yearADT * currentYear);
-**int getFemale(yearADT * currentYear);
-**devuelve los totales de hombres, mujeres y ns como parametro de salida
-**en su nombre retorna el total de donde esta el current
-*/
 int
 getCurrentTotals(yearADT yearSet, size_t * male, size_t * female, size_t * ns, int * year)
 {
@@ -109,9 +101,6 @@ getCurrentTotals(yearADT yearSet, size_t * male, size_t * female, size_t * ns, i
 	return (*male + *female + *ns);
 }
 
-/*Permite añadir las cantidad male y female en el año
-**donde esta parado current
-*/
 void
 addCurrentYearTotal(yearADT yearSet, size_t male, size_t female, size_t ns)
 {
@@ -121,16 +110,12 @@ addCurrentYearTotal(yearADT yearSet, size_t male, size_t female, size_t ns)
 	return;
 }
 
-/*
-*/
 void
 toBeginYear(yearADT yearSet)
 {
 	yearSet->currentYear = yearSet->firstYear;
 }
 
-/*
-*/
 void
 nextYear(yearADT yearSet)
 {
@@ -138,23 +123,17 @@ nextYear(yearADT yearSet)
 	return;
 }
 
-/*
-*/
 int hasNextYear(yearADT yearSet)
 {
 	return yearSet->currentYear != NULL;
 }
 
-/*
-*/
 void freeYears(yearADT years)
 {
 	freeYearRec(years->firstYear);
 	free(years);
 }
 
-/*
-*/
 static void
 freeYearRec(nodeYear * first)
 {
