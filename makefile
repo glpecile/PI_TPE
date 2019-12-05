@@ -6,4 +6,4 @@ FILES=main.c provinciasADT.c yearADT.c
 all:
 	$(COMPILER) -o $(OUTPUT_FILE) $(FILES)
 clean:
-	rm $(OUTPUT_FILE) $(CREATED_FILES)
+	rm -r $(OUTPUT_FILE) $(CREATED_FILES)
