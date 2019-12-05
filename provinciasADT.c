@@ -33,15 +33,15 @@ typedef struct provCDT
 //Funciones static de provinciasADT:
 
 //Convierte a la lista firtsList en provVec.
-static void listToArray(provADT set);
+static int listToArray(provADT set);
 //Realiza el algoritmo de busqueda binaria sobre un tProvVec.
 static int binarySearch(tProvVec * prov, size_t dim, int num);
+//Busqueda de código si el vector está ordenado alfabéticamente
+static int secuencialSearch(tProvVec * prov, size_t dim, int num);
 //Añade recursivamente los nodos en orden por código.
 static nodeProv * addProvRec(nodeProv * firstList, int code, char * value, size_t * size);
 //Libera los nodos de la lista de provincias.
 static void freeListRec(nodeProv * first);
-//
-static int secuencialSearch(tProvVec * prov, size_t dim, int num);
 //Compara dos variables de tipo unsigned int.
 static int
 compare(unsigned int  c1, unsigned int c2)
@@ -75,13 +75,18 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
     {
         nodeProv * aux = malloc(sizeof(nodeProv));
 
+        if(aux == NULL)
+        {
+            fprintf(stderr, "No se puedo asignar provincia: ");
+            perror("");
+            return firstList;
+        }
+
         aux->tail = firstList;
 		aux->code = code;
         aux->value = malloc((1 + strlen(value)) * sizeof(char));
         strcpy(aux->value, value);
-
         (*size)++;
-
         return aux;
     }
 
@@ -89,18 +94,23 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
     return firstList;
 }
 
-void finalizeProvAddition(provADT set)
+int finalizeProvAddition(provADT set)
 {
-    listToArray(set);
+    return listToArray(set);
 }
 
-static void
+static int
 listToArray(provADT set)
 {
     int i = 0;
     nodeProv * aux = set->firstList;
 
     set->provVec = calloc(set->qProv, sizeof(tProvVec));
+
+    if(set->provVec == NULL)
+    {
+        return 0;
+    }
 
     while(aux != NULL)
     {
@@ -110,6 +120,7 @@ listToArray(provADT set)
         aux = aux->tail;
         i++;
     }
+    return 1;
 }
 
 int addBirth(provADT set, int year, int provres, int gen)

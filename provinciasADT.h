@@ -42,11 +42,12 @@ int addProv(provADT set, int code, char * value);
 **                  provincias, y prepara la estructura de datos
 **                  para comenzar a cargar los datos de nacimientos.
 **                  Debe usarse una vez que se termina de agregar las provincias.
+                    Retorna 1 si pudo preparar la estructura.
 ** ------------------------------------------------------------------
 ** Precondición:    Set que sea válido, previamente creado.
 ** Postcondición:   Estructura preparada para cargar nacimientos.
 */
-void finalizeProvAddition(provADT set);
+int finalizeProvAddition(provADT set);
 
 /*
 ** Función:         addBirth
@@ -121,15 +122,13 @@ int hasNextProv(provADT set);
 void nextProv(provADT set);
 
 /*
-**
-**
-**
 ** Función:
 ** Uso:
 ** ------------------------------------------------------------------
-** Descripción:     Retorna en su nombre el total de la provincia donde está el currentTotal.
-                    En la estructura de parametro entrada/salida yearSet va guardando el
-                    total de nacimientos por año.
+** Descripción:     Retorna en su nombre el total de la provincia
+                    donde está el currentTotal. En la estructura
+                    de parametro entrada/salida yearSet va guardando
+                    el total de nacimientos por año.
 ** ------------------------------------------------------------------
 ** Precondición:
 ** Postcondición:

@@ -7,7 +7,6 @@
 #include "yearADT.h"
 
 #define MAX_TEXT 100
-#define BLOQUE 5
 
 //FUNCIONES AUXILIARES DE MAIN
 
@@ -22,7 +21,7 @@ void query1(FILE * file1, char * name, size_t totalProv);
 //Imprime el año junto con los nacimientos separados por sexo en orden ascendente (por año) al archivo query2
 void query2(FILE * file2, int year, size_t male, size_t female);
 //Imprime la provincia junto con su porcentaje asociado en orden descendente al archivo query3
-void query3(FILE * file3, char ** provs, size_t * pcts, int dim);
+void query3(FILE * file3, char ** provs, int * pcts, int dim);
 //Agrega los porcentajes en orden descendente
 //void addPct(char *** provs, size_t ** pcts, char * nameProv, size_t auxPct, int dim);
 
@@ -35,9 +34,8 @@ main (int argc, char * argv[])
 
     if(argc != 3)
     {
-        printf("Cantidad de archivos incorrecta.\n");
+        fprintf(stderr, "Cantidad de archivos incorrecta.\n");
         exit(1);
-
     }
     else
     {
@@ -49,8 +47,9 @@ main (int argc, char * argv[])
 
     if(provincias == NULL || nacimientos == NULL)
     {
-        printf("No se pudieron abrir los archivos.\n");
-        exit(2);
+        fprintf(stderr, "Los archivos no se pudieron abrir: ");
+        perror("");
+        exit(1);
     }
 
     provADT set = newSet();
@@ -90,10 +89,16 @@ readProvs(FILE * provincias, provADT set)
     {
         if(!addProv(set, cod, prov))
         {
-            printf("No se pudo agregar provincia. Cod: %d\tProv: %s\n", cod, prov);
+            fprintf(stderr, "No se pudo agregar provincia. Cod: %d\tProv: %s\n", cod, prov);
+            exit(1);
         }
     }
-    finalizeProvAddition(set);
+    if(!finalizeProvAddition(set))
+    {
+        fprintf(stderr, "Falla en estructura\n");
+        exit(3);
+    }
+
 }
 
 void
@@ -133,10 +138,11 @@ mainQuery(provADT set)
     int year;
 
     //Variables para el query3
-    size_t auxPct;
-    size_t * pcts = NULL;
-    char ** provs = NULL;
-    int dim = 0;
+    //size_t auxPct;
+    int dim = getQtyProv(set);
+    int i = 0;
+    int pcts[dim];
+    char * provs[dim];
 
     //Encabezados de query1, query2 y query3
     fprintf(file1, "Provincias;Codigo\n");
@@ -149,25 +155,12 @@ mainQuery(provADT set)
 
     while(hasNextProv(set))
     {
-        //printf("Hay prov\n");
         nameProv = getName(set);
         totalProv = getTotalProv(set, auxYearSet);
         query1(file1, nameProv, totalProv);
 
-        //pasar a funcion
-        if((auxPct = (totalProv * 100) / totalSet) > 0)
-        {
-            if(dim % BLOQUE == 0)
-            {
-                provs = realloc(provs, (dim + BLOQUE) * sizeof(char *));
-                pcts = realloc(pcts, (dim + BLOQUE) * sizeof(size_t));
-            }
-
-            provs[dim] = nameProv;
-            pcts[dim] = auxPct;
-            dim++;
-        }
-        //addPct(&provs, &pcts, nameProv, (auxPct = (totalProv * 100) / totalSet), dim);
+        provs[i] = nameProv;
+        pcts[i++] = (totalProv * 100) / totalSet;
 
         nextProv(set);
     }
@@ -180,12 +173,8 @@ mainQuery(provADT set)
         nextYear(auxYearSet);
     }
 
-    provs = realloc(provs, dim * sizeof(char *));
-    pcts = realloc(pcts, dim * sizeof(size_t));
     query3(file3, provs, pcts, dim);
 
-    free(provs);
-    free(pcts);
     freeYears(auxYearSet);
     fclose(file1);
     fclose(file2);
@@ -208,7 +197,7 @@ query2(FILE * file2, int year, size_t male, size_t female)
 }
 
 void
-query3(FILE * file3, char ** provs, size_t * pcts, int dim)
+query3(FILE * file3, char ** provs, int * pcts, int dim)
 {
     int max = 0;
 
@@ -221,33 +210,11 @@ query3(FILE * file3, char ** provs, size_t * pcts, int dim)
                 max = j;
             }
         }
-        fprintf(file3, "%s;%lu%%\n", provs[max], pcts[max]);
-        pcts[max] = 0;
-    }
-    return;
-}
-/*Arreglar
-void
-addPct(char *** provs, size_t ** pcts, char * nameProv, size_t auxPct, int dim)
-{
-    char * ans1 = NULL;
-    char * ans2 = NULL;
-    if(auxPct > 0)
-    {
-        if(dim % BLOQUE == 0)
+        if(pcts[max] > 0)
         {
-            ans1 = realloc(ans1, (dim + BLOQUE) * sizeof(char *));
-            ans2 = realloc(ans2, (dim + BLOQUE) * sizeof(size_t));
+            fprintf(file3, "%s;%d%%\n", provs[max], pcts[max]);
         }
-        ans1[dim] = nameProv;
-        ans2[dim] = auxPct;
-        dim++;
+        pcts[max] = -1;
     }
-    ans1 = realloc(ans1, (dim) * sizeof(char *));
-    ans2 = realloc(ans2, (dim) * sizeof(size_t));
-    ans2[dim]=0;
-    *provs=ans1;
-    *pcts=ans2;
     return;
 }
-*/
