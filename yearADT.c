@@ -49,9 +49,13 @@ addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag)
     {
         nodeYear * aux = calloc(1,sizeof(nodeYear));
 
+//        if(aux == NULL)
+        {
+
+        }
+
         aux->tail = node;
         aux->year = year;
-
         addByGender(aux, gen, qty);
 
         *flag = 1;
@@ -99,15 +103,6 @@ getCurrentTotals(yearADT yearSet, size_t * male, size_t * female, size_t * ns, i
     *ns = yearSet->currentYear->ns;
     *year = yearSet->currentYear->year;
 	return (*male + *female + *ns);
-}
-
-void
-addCurrentYearTotal(yearADT yearSet, size_t male, size_t female, size_t ns)
-{
-    yearSet->currentYear->male = male;
-    yearSet->currentYear->female = female;
-    yearSet->currentYear->ns = ns;
-	return;
 }
 
 void

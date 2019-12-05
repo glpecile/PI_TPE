@@ -35,7 +35,9 @@ main (int argc, char * argv[])
 
     if(argc != 3)
     {
-        error(1,"Cantidad de archivos incorrecta.");
+        printf("Cantidad de archivos incorrecta.\n");
+        exit(1);
+
     }
     else
     {
@@ -47,16 +49,15 @@ main (int argc, char * argv[])
 
     if(provincias == NULL || nacimientos == NULL)
     {
-        error(2,"No se pudieron abrir los archivos.");
+        printf("No se pudieron abrir los archivos.\n");
+        exit(2);
     }
-
 
     provADT set = newSet();
 
     readProvs(provincias, set);
 
     printf("Provincias cargadas.\n\n");
-    //printProv(set);
 
     readBirths(nacimientos, set);
     printf("Nacimientos cargados.\n\n");
@@ -82,12 +83,15 @@ readProvs(FILE * provincias, provADT set)
     int cod;
     char prov[MAX_TEXT];
 
-    fgets(prov, MAX_TEXT, provincias); //Elimina encabezado
+    fgets(prov, MAX_TEXT, provincias); //Elimina encabezado.
 
     printf("\nCARGANDO PROVINCIAS...\n");
     while(fscanf(provincias,"%d,%[^\r\n]\n", &cod, prov) == 2)
     {
-        addProv(set, cod, prov);
+        if(!addProv(set, cod, prov))
+        {
+            printf("No se pudo agregar provincia. Cod: %d\tProv: %s\n", cod, prov);
+        }
     }
     finalizeProvAddition(set);
 }
@@ -98,12 +102,15 @@ readBirths(FILE * nacimientos, provADT set)
     char aux[MAX_TEXT];
     int provres, year, gen, tipoParto;
 
-    fgets(aux, MAX_TEXT, nacimientos); //Elimina encabezado
+    fgets(aux, MAX_TEXT, nacimientos); //Elimina encabezado.
 
     printf("\nCARGANDO NACIMIENTOS...\n");
     while(fscanf(nacimientos, "%4d,%d,%d,%d,%[^\r\n]\n", &year, &provres, &tipoParto, &gen,aux) == 5)
     {
-        addBirth(set, year, provres, gen);
+        if(!addBirth(set, year, provres, gen))
+        {
+            printf("No se pudo agregar nacimiento. Provres: %d\n", provres);
+        }
     }
 }
 
@@ -243,12 +250,4 @@ addPct(char *** provs, size_t ** pcts, char * nameProv, size_t auxPct, int dim)
     *pcts=ans2;
     return;
 }
-*/
-
-/*
-Tutorial para compilar, borrar mas tarde
-gcc -Wall -pedantic -std=c99 -fsanitize=address -o prueba main.c
-make all
-./prueba provincias.csv nacimientos2.csv
-make clean
 */

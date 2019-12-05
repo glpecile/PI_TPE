@@ -1,10 +1,12 @@
 #include "provinciasADT.h"
 #include "yearADT.h"
 
+enum sortType {CODE_SORT = 0, ALPHA_SORT};
+
 //Se utiliza unicamente para cargar los datos.
 typedef struct nodeProv
 {
-    int code;   //Identificacion de la provincia.
+    int code;       //Identificacion de la provincia.
     char * value;   //Nombre de la provincia.
     struct nodeProv * tail;
 }nodeProv;
@@ -12,7 +14,7 @@ typedef struct nodeProv
 //Se utiliza para procesar los datos y facilita el ordenamiento y la busqueda.
 typedef struct tProvVec
 {
-    int code;   //identificador de la provincia.
+    int code;       //identificador de la provincia.
     char * value;   //Nombre de la provincia.
     yearADT years;  //Lista donde se almacenan los nacimientos de la provincia por año.
 }tProvVec;
@@ -20,11 +22,12 @@ typedef struct tProvVec
 //Estructura principal.
 typedef struct provCDT
 {
-    size_t total;   //Cantidad de nacimientos en el pais.
-    size_t qProv;   //Cantidad de Provincias.
-    int current;    //iterador de provVec.
-    tProvVec * provVec; //vector a ser creado en listToArray.
+    size_t total;           //Cantidad de nacimientos en el pais.
+    size_t qProv;           //Cantidad de Provincias.
+    int current;            //iterador de provVec.
+    tProvVec * provVec;     //vector a ser creado en listToArray.
     nodeProv * firstList;   //Lista en donde se cargan las provincias ordenadas por codigo.
+    int sort;               //ALPHA_SORT o CODE_SORT
 }provCDT;
 
 //Funciones static de provinciasADT:
@@ -37,6 +40,8 @@ static int binarySearch(tProvVec * prov, size_t dim, int num);
 static nodeProv * addProvRec(nodeProv * firstList, int code, char * value, size_t * size);
 //Libera los nodos de la lista de provincias.
 static void freeListRec(nodeProv * first);
+//
+static int secuencialSearch(tProvVec * prov, size_t dim, int num);
 //Compara dos variables de tipo unsigned int.
 static int
 compare(unsigned int  c1, unsigned int c2)
@@ -109,7 +114,19 @@ listToArray(provADT set)
 
 int addBirth(provADT set, int year, int provres, int gen)
 {
-    int idx = binarySearch(set->provVec, set->qProv, provres);
+    int idx;
+    switch(set->sort)
+    {
+        case CODE_SORT:
+        {
+            idx = binarySearch(set->provVec, set->qProv, provres);
+        }break;
+        case ALPHA_SORT:
+        {
+            idx = secuencialSearch(set->provVec, set->qProv, provres);
+        }
+    }
+
     size_t currentTotal = set->total;
 
     if(idx >= 0 && addInYear(set->provVec[idx].years, year, gen, 1))
@@ -147,6 +164,20 @@ binarySearch(tProvVec * prov, size_t dim, int num)
     return idx = -1;
 }
 
+static int
+secuencialSearch(tProvVec * prov, size_t dim, int num)
+{
+    for(int i = 0; i < dim; i++)
+    {
+        if(compare(prov[i].code, num) == 0)
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 void
 alphaSort(provADT set)
 {
@@ -165,6 +196,9 @@ alphaSort(provADT set)
             }
         }
     }
+
+    set->sort = ALPHA_SORT;
+    return;
 }
 
 void
@@ -194,16 +228,21 @@ getTotalProv(provADT set, yearADT yearSet)
     int year;
 
     toBeginYear(set->provVec[set->current].years);
+
     while(hasNextYear(set->provVec[set->current].years))
     {
         totalProv += getCurrentTotals(set->provVec[set->current].years, &male, &female, &ns, &year);
-        if(!addInYear(yearSet, year, MALE, male) || !addInYear(yearSet, year, FEMALE, female)
-            || !addInYear(yearSet, year, NOT_SPECIFIED, ns))
+
+        if(yearSet != NULL)
         {
-            printf("No se pudo agregar\n");
+            addInYear(yearSet, year, MALE, male);
+            addInYear(yearSet, year, FEMALE, female);
+            addInYear(yearSet, year, NOT_SPECIFIED, ns);
         }
+
         nextYear(set->provVec[set->current].years);
     }
+
     return totalProv;
 }
 
