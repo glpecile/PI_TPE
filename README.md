@@ -3,7 +3,7 @@
 
 Si desea generar el ejecutable, en consola ingresar comando `make all` 
 
-El ejecutable será guardado bajo el nombre TPFinal en el mismo directorio.
+El ejecutable será guardado bajo el nombre `TPFinal` en el mismo directorio.
 
 Luego para ejecutar el programa, se debe pasar como argumentos por linea de comando.
 Por ejemplo si ambos archivos CSV se encuentran en el mismo directorio que el ejecutable, el programa se puede invocar cómo:
