@@ -1,4 +1,4 @@
-#ifndef _provinciasADT_hProvincias
+#ifndef _provinciasADT_h
 #define _provinciasADT_h
 
 #include <stdio.h>
