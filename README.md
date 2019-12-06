@@ -15,6 +15,8 @@ Si desea eliminar los archivos generados en consola ingresar el comando `make cl
 
 ### Salida de errores
 La salida de errores predeterminada es salida estándar. 
+
 Para redireccionar la salida de errores añadir `2>fichero`. Esto envía la salida de error a _fichero_.
+
 Por ejemplo:
 `./TPFinal provincias.csv nacimientos.csv 2>error.txt`
