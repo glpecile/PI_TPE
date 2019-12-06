@@ -55,14 +55,13 @@ main (int argc, char * argv[])
     provADT set = newSet();
 
     readProvs(provincias, set);
-
-    printf("Provincias cargadas.\n\n");
+    printf("Provincias cargadas: %lu\n", getQtyProv(set));
 
     readBirths(nacimientos, set);
-    printf("Nacimientos cargados.\n\n");
+    printf("Nacimientos cargados: %lu\n", getTotalSet(set));
 
     mainQuery(set);
-    printf("ARCHIVOS GENERADOS\n");
+    printf("\nARCHIVOS GENERADOS\n");
 
     freeSet(set);
 
@@ -89,16 +88,17 @@ readProvs(FILE * provincias, provADT set)
     {
         if(!addProv(set, cod, prov))
         {
-            fprintf(stderr, "No se pudo agregar provincia. Cod: %d\tProv: %s\n", cod, prov);
+            freeSet(set);
             exit(1);
         }
     }
     if(!finalizeProvAddition(set))
     {
-        fprintf(stderr, "Falla en estructura\n");
-        exit(3);
+        freeSet(set);
+        exit(1);
     }
 
+    return;
 }
 
 void
@@ -114,9 +114,12 @@ readBirths(FILE * nacimientos, provADT set)
     {
         if(!addBirth(set, year, provres, gen))
         {
-            printf("No se pudo agregar nacimiento. Provres: %d\n", provres);
+            freeSet(set);
+            exit(1);
         }
     }
+
+    return;
 }
 
 void
@@ -131,14 +134,13 @@ mainQuery(provADT set)
     char * nameProv;
     size_t totalProv;
     size_t totalSet = getTotalSet(set);
-    printf("TOTAL NACIMIENTOS: %lu\n", totalSet);
+    //printf("TOTAL NACIMIENTOS: %lu\n", totalSet);
 
     //Variables para el query2
     size_t male, female, ns;
     int year;
 
     //Variables para el query3
-    //size_t auxPct;
     int dim = getQtyProv(set);
     int i = 0;
     int pcts[dim];
@@ -152,13 +154,12 @@ mainQuery(provADT set)
     alphaSort(set);
 
     toBeginProv(set);
-
     while(hasNextProv(set))
     {
         nameProv = getName(set);
         totalProv = getTotalProv(set, auxYearSet);
-        query1(file1, nameProv, totalProv);
 
+        query1(file1, nameProv, totalProv);
         provs[i] = nameProv;
         pcts[i++] = (totalProv * 100) / totalSet;
 
@@ -169,16 +170,20 @@ mainQuery(provADT set)
     while(hasNextYear(auxYearSet))
     {
         getCurrentTotals(auxYearSet, &male, &female, &ns, &year);
+
         query2(file2, year, male, female);
+
         nextYear(auxYearSet);
     }
 
     query3(file3, provs, pcts, dim);
 
     freeYears(auxYearSet);
+
     fclose(file1);
     fclose(file2);
     fclose(file3);
+
     return;
 }
 

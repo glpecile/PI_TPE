@@ -3,7 +3,7 @@
 
 enum sortType {CODE_SORT = 0, ALPHA_SORT};
 
-//Se utiliza unicamente para cargar los datos.
+//Estructura donde se cargan las provincias
 typedef struct nodeProv
 {
     int code;       //Identificacion de la provincia.
@@ -11,7 +11,7 @@ typedef struct nodeProv
     struct nodeProv * tail;
 }nodeProv;
 
-//Se utiliza para procesar los datos y facilita el ordenamiento y la busqueda.
+//Estructura donde, una vez cargadas las provincias, se cargan los nacimientos separados por año y sexo
 typedef struct tProvVec
 {
     int code;       //identificador de la provincia.
@@ -27,7 +27,7 @@ typedef struct provCDT
     int current;            //iterador de provVec.
     tProvVec * provVec;     //vector a ser creado en listToArray.
     nodeProv * firstList;   //Lista en donde se cargan las provincias ordenadas por codigo.
-    int sort;               //ALPHA_SORT o CODE_SORT
+    int sort;               //Define el modo de ordenamiento de provVec ALPHA_SORT o CODE_SORT
 }provCDT;
 
 //Funciones static de provinciasADT:
@@ -55,7 +55,16 @@ compare(unsigned int  c1, unsigned int c2)
 provADT
 newSet(void)
 {
-    return calloc (1,sizeof(provCDT));
+    provADT aux = calloc(1, sizeof(provCDT));
+
+    if(aux == NULL)
+    {
+        fprintf(stderr, "Fallo al crear estructura provADT: ");
+        perror("");
+        exit(1);
+    }
+    
+    return aux;
 }
 
 int
@@ -77,7 +86,7 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
 
         if(aux == NULL)
         {
-            fprintf(stderr, "No se puedo asignar provincia: ");
+            fprintf(stderr, "No se pudo asignar provincia \"%d\" \"%s\": ", code, value);
             perror("");
             return firstList;
         }
@@ -109,6 +118,8 @@ listToArray(provADT set)
 
     if(set->provVec == NULL)
     {
+        fprintf(stderr, "Fallo de memoria: ");
+        perror("");
         return 0;
     }
 

@@ -30,7 +30,16 @@ static void freeYearRec(nodeYear * first);
 //FUNCIONES PRINCIPALES DEL TAD DE NACIMIENTOS POR AÑO:
 yearADT newYears (void)
 {
-	return calloc(1,sizeof(yearCDT));
+	yearADT aux = calloc(1, sizeof(yearCDT));
+
+    if(aux == NULL)
+    {
+        fprintf(stderr, "Fallo al crear estructura yearADT: ");
+        perror("");
+        exit(1);
+    }
+    
+    return aux;
 }
 
 int addInYear (yearADT yearSet, int year, int gen, size_t qty)
@@ -49,9 +58,11 @@ addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag)
     {
         nodeYear * aux = calloc(1,sizeof(nodeYear));
 
-//        if(aux == NULL)
+        if(aux == NULL)
         {
-
+        	fprintf(stderr, "No se pudo agregar nacimiento. Año: %d| Gen: %d |Cant: %lu\n", year, gen, qty);
+            perror("");
+            return node;
         }
 
         aux->tail = node;
