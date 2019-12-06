@@ -3,24 +3,24 @@
 //Estructura para los nacimientos por año, funciona como lista.
 typedef struct nodeYear
 {
-    int year;   //Año en el que se encuantra.
-    size_t male;    //Cantidad de hombres.
-    size_t female;  //Cantidad de mujeres.
-    size_t ns;  //Cantidad de no especificado.
+    int year;        //Año en el que se encuentra.
+    size_t male;     //Cantidad de hombres.
+    size_t female;   //Cantidad de mujeres.
+    size_t ns;       //Cantidad de no especificado.
     struct nodeYear * tail;
 }nodeYear;
 
 typedef struct yearCDT
 {
-	nodeYear * firstYear;  //Primer nodo de la lista.
+	nodeYear * firstYear;      //Primer nodo de la lista.
 	nodeYear * currentYear;    //Iterador de la lista.
 }yearCDT;
 
 //Funciones static de yearADT:
 
-//Añade un nodo de forma recursiva.
+//Añade qty nacimientos en el año correspondiente.
 static nodeYear * addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag);
-//Agrega al género indicado pasado como parámetro la cantidad pasada.
+//Agrega al género indicado pasado como parámetro la cantidad qty.
 static void addByGender(nodeYear * node, int gen, size_t qty);
 //Libera los nodos de la estructura de forma recursiva.
 static void freeYearRec(nodeYear * first);
@@ -30,7 +30,15 @@ static void freeYearRec(nodeYear * first);
 //FUNCIONES PRINCIPALES DEL TAD DE NACIMIENTOS POR AÑO:
 yearADT newYears (void)
 {
-	return calloc(1,sizeof(yearCDT));
+	yearADT aux = calloc(1, sizeof(yearCDT));
+
+    if(aux == NULL)
+    {
+        fprintf(stderr, "Fallo al crear estructura yearADT: ");
+        perror("");
+    }
+
+    return aux;
 }
 
 int addInYear (yearADT yearSet, int year, int gen, size_t qty)
@@ -49,9 +57,11 @@ addYearRec(nodeYear * node, int year, int gen, size_t qty, int * flag)
     {
         nodeYear * aux = calloc(1,sizeof(nodeYear));
 
-//        if(aux == NULL)
+        if(aux == NULL)
         {
-
+        	fprintf(stderr, "No se pudo agregar nacimiento. Año: %d| Gen: %d |Cant: %lu\n", year, gen, qty);
+            perror("");
+            return node;
         }
 
         aux->tail = node;
@@ -109,6 +119,7 @@ void
 toBeginYear(yearADT yearSet)
 {
 	yearSet->currentYear = yearSet->firstYear;
+    return;
 }
 
 void
@@ -127,6 +138,7 @@ void freeYears(yearADT years)
 {
 	freeYearRec(years->firstYear);
 	free(years);
+    return;
 }
 
 static void

@@ -3,7 +3,7 @@
 
 enum sortType {CODE_SORT = 0, ALPHA_SORT};
 
-//Se utiliza unicamente para cargar los datos.
+//Estructura donde se cargan las provincias
 typedef struct nodeProv
 {
     int code;       //Identificacion de la provincia.
@@ -11,10 +11,10 @@ typedef struct nodeProv
     struct nodeProv * tail;
 }nodeProv;
 
-//Se utiliza para procesar los datos y facilita el ordenamiento y la busqueda.
+//Estructura donde, una vez cargadas las provincias, se cargan los nacimientos separados por año y sexo
 typedef struct tProvVec
 {
-    int code;       //identificador de la provincia.
+    int code;       //Identificador de la provincia.
     char * value;   //Nombre de la provincia.
     yearADT years;  //Lista donde se almacenan los nacimientos de la provincia por año.
 }tProvVec;
@@ -24,10 +24,10 @@ typedef struct provCDT
 {
     size_t total;           //Cantidad de nacimientos en el pais.
     size_t qProv;           //Cantidad de Provincias.
-    int current;            //iterador de provVec.
-    tProvVec * provVec;     //vector a ser creado en listToArray.
+    int current;            //Iterador de provVec.
+    tProvVec * provVec;     //Vector a ser creado en listToArray.
     nodeProv * firstList;   //Lista en donde se cargan las provincias ordenadas por codigo.
-    int sort;               //ALPHA_SORT o CODE_SORT
+    int sort;               //Define el modo de ordenamiento de provVec ALPHA_SORT o CODE_SORT
 }provCDT;
 
 //Funciones static de provinciasADT:
@@ -55,7 +55,15 @@ compare(unsigned int  c1, unsigned int c2)
 provADT
 newSet(void)
 {
-    return calloc (1,sizeof(provCDT));
+    provADT aux = calloc(1, sizeof(provCDT));
+
+    if(aux == NULL)
+    {
+        fprintf(stderr, "Fallo al crear estructura provADT: ");
+        perror("");
+    }
+
+    return aux;
 }
 
 int
@@ -75,16 +83,15 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
     {
         nodeProv * aux = malloc(sizeof(nodeProv));
 
-        if(aux == NULL)
+        if(aux == NULL || (aux->value = malloc((1 + strlen(value)) * sizeof(char))) == NULL)
         {
-            fprintf(stderr, "No se puedo asignar provincia: ");
+            fprintf(stderr, "No se pudo asignar provincia \"%d\" \"%s\": ", code, value);
             perror("");
             return firstList;
         }
 
         aux->tail = firstList;
 		aux->code = code;
-        aux->value = malloc((1 + strlen(value)) * sizeof(char));
         strcpy(aux->value, value);
         (*size)++;
         return aux;
@@ -109,6 +116,8 @@ listToArray(provADT set)
 
     if(set->provVec == NULL)
     {
+        fprintf(stderr, "Fallo de memoria: ");
+        perror("");
         return 0;
     }
 
@@ -216,6 +225,7 @@ void
 toBeginProv(provADT set)
 {
     set->current = 0;
+    return;
 }
 
 int

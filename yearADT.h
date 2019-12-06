@@ -8,89 +8,94 @@ enum gender {MALE = 1, FEMALE, NOT_SPECIFIED = 9};
 
 typedef struct yearCDT * yearADT;
 
+
 /*
-** Inicializa la lista.
-** Función:
-** Uso:
+** Función:         newYears
+** Uso:             years = newYears();
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Inicializa la lista.
+**                  Si no se pudo asignar memoria, retorna NULL.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    -
+** Postcondición:   Lista de años con nacimientos y géneros.
 */
 yearADT newYears (void);
 
+
 /*
-** Recibe el set->provVec->years y crea un nodo nuevo si el año no existe.
-** Si el año ya existe, actúa como bagADT y suma uno a su género correspondiente.
-** Función:
-** Uso:
+** Función:         addInYear
+** Uso:             addInYear(years, 2016, 9, 1);
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Agrega qty nacimientos en el año year.
+**                  Retorna 1 si pudo añadir los nacimientos.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Lista de años válida, previamente creada.
+** Postcondición:   Lista years con los nuevos nacimientos.
 */
 int addInYear(yearADT yearSet, int year, int gen, size_t qty);
 
+
 /*
-** Retorna como parametro entrada/salida los totales de hombres, mujeres y no especificado.
-** En su nombre retorna la suma total de los sexos nacidos ese año.
-** Función:
-** Uso:
+** Función:         getCurrentTotals
+** Uso:             getCurrentTotals(auxYearSet, &male, &female, &ns, &year)
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Retorna como parametro entrada/salida los totales
+**                  de hombres, mujeres y no especificado. En su nombre
+**                  retorna la suma total de los sexos nacidos ese año.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Lista de años válida. toBeginYear iniciado.
+** Postcondición:   -
 */
 int getCurrentTotals(yearADT yearSet, size_t * male, size_t * female, size_t * ns, int * year);
 
+
 /*
-** Inicia el iterador de currentYear.
-** Función:
-** Uso:
+** Función:         toBeginYear
+** Uso:             toBeginYear(auxYearSet)
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Inicia el iterador de currentYear.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Lista de años válida, previamente creada.
+** Postcondición:   Se pueden iterar los años.
 */
 void toBeginYear (yearADT yearSet);
 
+
 /*
-** Avanza el iterador.
-** Función:
-** Uso:
+** Función:         nextYear
+** Uso:             nextYear(yearSet);
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Avanza el iterador.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Lista de años válida, previamente creada e iterada.
+** Postcondición:   Avanza el iterador al próximo año.
 */
 void nextYear (yearADT yearSet);
 
+
 /*
-** Retorna en su nombre si hay un siguiente nodo en la lista.
-** Función:
-** Uso:
+** Función:         hasNextYear
+** Uso:             hasNextYear(yearSet)
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Retorna en su nombre si hay un siguiente año
+**                  en la lista.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Lista de años válida, previamente creada y toBeginYear
+**                  ejecutado.
+** Postcondición:   -
 */
 int hasNextYear (yearADT yearSet);
 
+
 /*
-** Libera la lista llamando a su función recursiva para los nodos.
-** Función:
-** Uso:
+** Función:         freeYears
+** Uso:             freeYears(yearSet)
 ** ------------------------------------------------------------------
-** Descripción:
-** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Descripción:     Elimina la lista de años y libera los recursos
+**                  previamente reservados en la memoria.
+**------------------------------------------------------------------
+** Precondición:    Lista de años creada y válida.
+** Postcondición:   Los recursos utilizados por la lista  fueron liberados.
 */
 void freeYears(yearADT years);
 
