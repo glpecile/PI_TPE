@@ -2,7 +2,7 @@
 ## Integrantes: Arce Julian Francisco, Catalan Roberto Jose y Pecile Gian Luca.
 
 ### Instalación
-En consola ingresar comando `make all`
+En consola ingresar comando `make all`.
 El ejecutable será guardado bajo el nombre `TPFinal` en el mismo directorio.
 
 ### Modo de uso
