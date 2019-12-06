@@ -63,7 +63,7 @@ newSet(void)
         perror("");
         exit(1);
     }
-    
+
     return aux;
 }
 

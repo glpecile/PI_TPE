@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include "yearADT.h"
 
 typedef struct provCDT * provADT;
 typedef struct tPercentList * percentList;
+
 
 /*
 ** Función:         newSet
@@ -20,6 +20,7 @@ typedef struct tPercentList * percentList;
 ** Postcondición:   Set de provincias creados.
 */
 provADT newSet(void);
+
 
 /*
 ** Función:         addProv
@@ -33,6 +34,7 @@ provADT newSet(void);
 ** Postcondición:   Set con la nueva provincia.
 */
 int addProv(provADT set, int code, char * value);
+
 
 /*
 ** Función:         finalizeProvAddition
@@ -48,6 +50,7 @@ int addProv(provADT set, int code, char * value);
 ** Postcondición:   Estructura preparada para cargar nacimientos.
 */
 int finalizeProvAddition(provADT set);
+
 
 /*
 ** Función:         addBirth
@@ -67,6 +70,7 @@ int finalizeProvAddition(provADT set);
 */
 int addBirth(provADT set, int year, int provres, int gen);
 
+
 /*
 ** Función:         alphaSort
 ** Uso:             alphaSort(set);
@@ -83,6 +87,7 @@ int addBirth(provADT set, int year, int provres, int gen);
 */
 void alphaSort(provADT set);
 
+
 /*
 ** Función:         toBeginProv
 ** Uso:             toBeginProv(set);
@@ -95,6 +100,7 @@ void alphaSort(provADT set);
 */
 void toBeginProv(provADT set);
 
+
 /*
 **
 ** Función:         hasNextProv
@@ -104,14 +110,14 @@ void toBeginProv(provADT set);
 **                  la estructura.
 ** ------------------------------------------------------------------
 ** Precondición:    Debe haberse ejecutado toBeginProv.
-** Postcondición:               -
+** Postcondición:   -
 */
 int hasNextProv(provADT set);
 
+
 /*
-**
-** Función:          nextProv
-** Uso:              nextProv(set)
+** Función:         nextProv
+** Uso:             nextProv(set)
 ** ------------------------------------------------------------------
 ** Descripción:     Itera sobre la estructura.
 ** ------------------------------------------------------------------
@@ -121,55 +127,64 @@ int hasNextProv(provADT set);
 */
 void nextProv(provADT set);
 
+
 /*
-** Función:
-** Uso:
+** Función:         getTotalProv
+** Uso:             getTotalProv(set,year)
 ** ------------------------------------------------------------------
 ** Descripción:     Retorna en su nombre el total de la provincia
-                    donde está el currentTotal. En la estructura
-                    de parametro entrada/salida yearSet va guardando
-                    el total de nacimientos por año.
+**                  donde está el currentTotal. En la estructura
+**                  de parametro entrada/salida yearSet va guardando
+**                  el total de nacimientos por año.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Set valido con la estructura cargada con los
+**                  nacimientos y provincias, y una estructura de
+**                  tipo yearADT previamente creada.
+** Postcondición:   La estructura de tipo yearADT obtiene todos los
+**                  años con sus respectivos nacimientos.
 */
 int getTotalProv(provADT set, yearADT yearSet);
 
+
 /*
-** Retorna en su nombre el total de nacimientos.
-** Función:
-** Uso:
+** Función:         getTotalSet
+** Uso:             getTotalSet(set)
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Retorna en su nombre el total de nacimientos.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Set valido con los nacimientos y las provincias
+**                  cargadas
+** Postcondición    -
 */
 size_t getTotalSet(provADT set);
 
+
 /*
-** Retorna en su nombre la cantidad de provincias.
-** Función:
-** Uso:
+**
+** Función:         getQtyProv
+** Uso:             getQtyProv(set)
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Retorna en su nombre la cantidad de provincias.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Set valido con las provincias previamente cargadas
+** Postcondición:   -
 */
 size_t getQtyProv(provADT set);
 
+
 /*
-** Retorna en su nombre la provincia actual.
-** Función:
-** Uso:
+** Función:         getName
+** Uso:             getName(set)
 ** ------------------------------------------------------------------
-** Descripción:
+** Descripción:     Retorna en su nombre la provincia actual.
 ** ------------------------------------------------------------------
-** Precondición:
-** Postcondición:
+** Precondición:    Set valido con las provincias previamente cargadas
+**                  y el iterador inicializado. Además se debe haber
+**                  ejecutado la funcion hasNextProv.
+** Postcondición:   -
 */
 char * getName(provADT set);
+
 
 /*
 ** Libera la estructura junto con sus nodos y vector.
@@ -180,7 +195,7 @@ char * getName(provADT set);
 **                  memoria utilizados.
 ** ------------------------------------------------------------------
 ** Precondición:    Set válido.
-** Postcondición:
+** Postcondición:   Los recursos utilizados por el set fueron liberados.
 */
 void freeSet(provADT set);
 

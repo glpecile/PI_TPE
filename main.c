@@ -22,8 +22,6 @@ void query1(FILE * file1, char * name, size_t totalProv);
 void query2(FILE * file2, int year, size_t male, size_t female);
 //Imprime la provincia junto con su porcentaje asociado en orden descendente al archivo query3
 void query3(FILE * file3, char ** provs, int * pcts, int dim);
-//Agrega los porcentajes en orden descendente
-//void addPct(char *** provs, size_t ** pcts, char * nameProv, size_t auxPct, int dim);
 
 int
 main (int argc, char * argv[])
@@ -81,7 +79,7 @@ readProvs(FILE * provincias, provADT set)
     int cod;
     char prov[MAX_TEXT];
 
-    fgets(prov, MAX_TEXT, provincias); //Elimina encabezado.
+    fgets(prov, MAX_TEXT, provincias);  //Elimina encabezado del csv.
 
     printf("\nCARGANDO PROVINCIAS...\n");
     while(fscanf(provincias,"%d,%[^\r\n]\n", &cod, prov) == 2)
@@ -107,7 +105,7 @@ readBirths(FILE * nacimientos, provADT set)
     char aux[MAX_TEXT];
     int provres, year, gen, tipoParto;
 
-    fgets(aux, MAX_TEXT, nacimientos); //Elimina encabezado.
+    fgets(aux, MAX_TEXT, nacimientos);  //Elimina encabezado del csv.
 
     printf("\nCARGANDO NACIMIENTOS...\n");
     while(fscanf(nacimientos, "%4d,%d,%d,%d,%[^\r\n]\n", &year, &provres, &tipoParto, &gen,aux) == 5)

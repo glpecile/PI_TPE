@@ -3,16 +3,16 @@
 //Estructura para los nacimientos por año, funciona como lista.
 typedef struct nodeYear
 {
-    int year;   //Año en el que se encuantra.
-    size_t male;    //Cantidad de hombres.
-    size_t female;  //Cantidad de mujeres.
-    size_t ns;  //Cantidad de no especificado.
+    int year;        //Año en el que se encuantra.
+    size_t male;     //Cantidad de hombres.
+    size_t female;   //Cantidad de mujeres.
+    size_t ns;       //Cantidad de no especificado.
     struct nodeYear * tail;
 }nodeYear;
 
 typedef struct yearCDT
 {
-	nodeYear * firstYear;  //Primer nodo de la lista.
+	nodeYear * firstYear;      //Primer nodo de la lista.
 	nodeYear * currentYear;    //Iterador de la lista.
 }yearCDT;
 
@@ -38,7 +38,7 @@ yearADT newYears (void)
         perror("");
         exit(1);
     }
-    
+
     return aux;
 }
 
