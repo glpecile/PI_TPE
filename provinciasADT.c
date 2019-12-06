@@ -101,7 +101,8 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
     return firstList;
 }
 
-int finalizeProvAddition(provADT set)
+int 
+finalizeProvAddition(provADT set)
 {
     return listToArray(set);
 }
@@ -132,7 +133,8 @@ listToArray(provADT set)
     return 1;
 }
 
-int addBirth(provADT set, int year, int provres, int gen)
+int 
+addBirth(provADT set, int year, int provres, int gen)
 {
     int idx;
     switch(set->sort)
