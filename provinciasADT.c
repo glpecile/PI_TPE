@@ -79,7 +79,9 @@ addProv(provADT set, int code, char * value)
 static nodeProv *
 addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
 {
-    if(firstList == NULL || compare(code,firstList->code) < 0)
+    int c;
+
+    if(firstList == NULL || (c = compare(code,firstList->code)) < 0)
     {
         nodeProv * aux = malloc(sizeof(nodeProv));
 
@@ -95,6 +97,12 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
         strcpy(aux->value, value);
         (*size)++;
         return aux;
+    }
+
+    if(c == 0)
+    {
+        fprintf(stderr, "Ya existe provincia de código: \"%d\"\n", code);
+        return firstList;
     }
 
     firstList->tail = addProvRec(firstList->tail, code, value, size);
@@ -154,6 +162,11 @@ addBirth(provADT set, int year, int provres, int gen)
     if(idx >= 0 && addInYear(set->provVec[idx].years, year, gen, 1))
     {
         (set->total)++;
+    }
+
+    if(idx == -1)
+    {
+        fprintf(stderr, "No se encontró provincia de código: %d \n", provres);
     }
 
     return set->total != currentTotal;
@@ -290,7 +303,7 @@ getName(provADT set)
 void
 freeSet(provADT set)
 {
-    for(int i = 0; i < set->qProv; i++)
+    for(int i = 0; set->provVec != NULL && i < set->qProv; i++)
     {
         freeYears(set->provVec[i].years);
     }
