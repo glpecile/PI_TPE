@@ -6,6 +6,7 @@
 
 enum gender {MALE = 1, FEMALE, NOT_SPECIFIED = 9};
 
+//Estructura para los nacimientos por año, funciona como lista bag.
 typedef struct yearCDT * yearADT;
 
 

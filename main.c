@@ -10,12 +10,21 @@
 
 //FUNCIONES AUXILIARES DE MAIN
 
-//Lee los datos del csv de provincias.
-void readProvs(FILE * provincias, provADT set);
-//Lee los datos del csv de nacimientos.
-void readBirths(FILE * nacimientos, provADT set);
-//Utiliza los datos procesados para invocar las queries, genera los archivos necesarios.
-void mainQuery(provADT set);
+/*
+**Lee los datos del csv de provincias.
+**Retorna 1 si la carga fue satisfactoria.
+*/
+int readProvs(FILE * provincias, provADT set);
+/*
+**Lee los datos del csv de nacimientos.
+**Retorna 1 si la carga fue satisfactoria.
+*/
+int readBirths(FILE * nacimientos, provADT set);
+/*
+**Utiliza los datos procesados para invocar las queries, genera los archivos necesarios.
+**Retorna 1 si pudo generar los queries.
+*/
+int mainQuery(provADT set);
 //Imprime la provincia junto con su cantidad de nacimientos en orden alfabetico al archivo query1.
 void query1(FILE * file1, char * name, size_t totalProv);
 //Imprime el año junto con los nacimientos separados por sexo en orden ascendente por año al archivo query2.
@@ -49,31 +58,28 @@ main (int argc, char * argv[])
     }
 
     provADT set;
-    if( (set = newSet()) == NULL)
+
+    if((set = newSet()) != NULL && readProvs(provincias, set) && readBirths(nacimientos, set) && mainQuery(set))
     {
-        exit(1);
+        printf("\nARCHIVOS GENERADOS\n");
+        printf("Busque en el directorio del ejecutable generado los archivos csv.\n");
     }
-
-    readProvs(provincias, set);
-    printf("Provincias cargadas: %lu\n", getQtyProv(set));
-
-    readBirths(nacimientos, set);
-    printf("Nacimientos cargados: %lu\n", getTotalSet(set));
-
-    mainQuery(set);
-    printf("\nARCHIVOS GENERADOS\n");
+    else
+    {
+        printf("\nNo se generaron archivos csv. Revise salida de errores.\n");
+    }
 
     freeSet(set);
 
     fclose(provincias);
     fclose(nacimientos);
 
-    printf("PROGRAMA FINALIZADO\n");
-    printf("\nBusque en el directorio del ejecutable generado los documentos csv.\n");
+    printf("\nPROGRAMA FINALIZADO\n");
+
     return 0;
 }
 
-void
+int
 readProvs(FILE * provincias, provADT set)
 {
     int cod;
@@ -86,20 +92,19 @@ readProvs(FILE * provincias, provADT set)
     {
         if(!addProv(set, cod, prov))
         {
-            freeSet(set);
-            exit(1);
+            return 0;
         }
     }
     if(!finalizeProvAddition(set))
     {
-        freeSet(set);
-        exit(1);
+        return 0;
     }
 
-    return;
+    printf("Provincias cargadas: %lu\n", getQtyProv(set));
+    return 1;
 }
 
-void
+int
 readBirths(FILE * nacimientos, provADT set)
 {
     char aux[MAX_TEXT];
@@ -112,15 +117,15 @@ readBirths(FILE * nacimientos, provADT set)
     {
         if(!addBirth(set, year, provres, gen))
         {
-            freeSet(set);
-            exit(1);
+            return 0;
         }
     }
 
-    return;
+    printf("Nacimientos cargados: %lu\n", getTotalSet(set));
+    return 1;
 }
 
-void
+int
 mainQuery(provADT set)
 {
     FILE * file1 = fopen("query1.csv", "w");
@@ -131,7 +136,7 @@ mainQuery(provADT set)
     yearADT auxYearSet;
     if((auxYearSet = newYears()) == NULL)
     {
-        exit(1);
+        return 0;
     }
     char * nameProv;
     size_t totalProv;
@@ -185,7 +190,7 @@ mainQuery(provADT set)
     fclose(file2);
     fclose(file3);
 
-    return;
+    return 1;
 }
 
 void

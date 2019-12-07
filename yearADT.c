@@ -1,6 +1,6 @@
 #include "yearADT.h"
 
-//Estructura para los nacimientos por año, funciona como lista.
+//Estructura para los nacimientos por año, funciona como lista bag.
 typedef struct nodeYear
 {
     int year;        //Año en el que se encuentra.
@@ -28,7 +28,7 @@ static void freeYearRec(nodeYear * first);
 //Fin de funciones static.
 
 //FUNCIONES PRINCIPALES DEL TAD DE NACIMIENTOS POR AÑO:
-yearADT 
+yearADT
 newYears (void)
 {
 	yearADT aux = calloc(1, sizeof(yearCDT));
@@ -42,7 +42,7 @@ newYears (void)
     return aux;
 }
 
-int 
+int
 addInYear (yearADT yearSet, int year, int gen, size_t qty)
 {
     int flag = 0;
@@ -131,13 +131,13 @@ nextYear(yearADT yearSet)
 	return;
 }
 
-int 
+int
 hasNextYear(yearADT yearSet)
 {
 	return yearSet->currentYear != NULL;
 }
 
-void 
+void
 freeYears(yearADT years)
 {
 	freeYearRec(years->firstYear);
