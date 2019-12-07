@@ -128,10 +128,6 @@ readBirths(FILE * nacimientos, provADT set)
 int
 mainQuery(provADT set)
 {
-    FILE * file1 = fopen("query1.csv", "w");
-    FILE * file2 = fopen("query2.csv", "w");
-    FILE * file3 = fopen("query3.csv", "w");
-
     //Variables para el query1
     yearADT auxYearSet;
     if((auxYearSet = newYears()) == NULL)
@@ -151,6 +147,10 @@ mainQuery(provADT set)
     int i = 0;
     int pcts[dim];
     char * provs[dim];
+
+    FILE * file1 = fopen("query1.csv", "w");
+    FILE * file2 = fopen("query2.csv", "w");
+    FILE * file3 = fopen("query3.csv", "w");
 
     //Encabezados de query1, query2 y query3
     fprintf(file1, "Provincias;Nacimientos\n");
