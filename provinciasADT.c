@@ -93,7 +93,7 @@ addProvRec(nodeProv * firstList, int code, char * value, size_t * size)
         }
 
         aux->tail = firstList;
-		aux->code = code;
+        aux->code = code;
         strcpy(aux->value, value);
         (*size)++;
         return aux;
